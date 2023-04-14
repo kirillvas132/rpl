@@ -19,25 +19,7 @@ import matplotlib.pyplot as plt
 
 
 st.set_page_config(page_title="Аналитика", page_icon=":bar_chart:", layout="wide")
-
-
-# In[4]:
-
-
-row0_spacer1, row0_1, row0_spacer2, row0_2, row0_spacer3 = st.columns((.1, 2.3, .1, 1.3, .1))
-with row0_1:
-    st.title('Анализ футболистов на основе статистических показателей')
-with row0_2:
-    st.text("")
-    st.subheader('App by [Kirill Vasyuchkov](https://vk.com/id115198961)')
-row3_spacer1, row3_1, row3_spacer2 = st.columns((.1, 3.2, .1))
-with row3_1:
-    st.markdown('Используются средние показатели за 90 минут [InStat](https://instatsport.com/)(последние обновления базы октябрь-молодежки, ноябрь-декабрь взрослые лиги)')
-    
-
-
-# In[5]:
-
+  
 
 data2 = pd.DataFrame()
 
@@ -105,7 +87,7 @@ def nas0(si, lig, kef):
         df[i] = pd.to_numeric(df[i], errors='coerce').fillna(0).astype(float)
 
     if tm == "Ближе к основе":
-        df = df[(df['Minutes played']>0.7*df['Matches played'].max())]
+        df = df[(df['Minutes played']>0.7*df['Minutes played'].max())]
     else:
         df = df[(df['Minutes played']<=0.7*df['Minutes played'].max())]
 
