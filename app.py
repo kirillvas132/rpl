@@ -32,7 +32,7 @@ st.set_page_config(page_title="Аналитика", page_icon=":bar_chart:", lay
 
 row0_spacer1, row0_1, row0_spacer2, row0_2, row0_spacer3 = st.columns((.1, 2.3, .1, 1.3, .1))
 with row0_1:
-    st.title('Анализ футболистов на основе статистических показателей')
+    st.title('Анализ футболистов на основе статистических показателей(14.04)')
 
 
 data2 = pd.DataFrame()
