@@ -348,7 +348,7 @@ try:
 except:
     st.error('Выберите хотя бы одну лигу, автоматически добавлена РПЛ')
     st.error('Максимальное количество игроков в выборке = 1000, сайт в стадии разработки')
-    data = nas0('1PP9AT1gxSpEPXWj8OjidLK17s-w17Mp5XfJvYhKDsO4', 'РПЛ', 1)
+    data = nas0('1HJ6JxCxHm4OJMMcDo2w9uMldHk3yich7acxizJKMK8k', 'РПЛ', 1)
     data2=data2.append(data, sort=False)
     data2 = data2[['Name','Position','sh','Defence','Recovery','Distribution','Take on','air','Chance creation','Rank','Team', 'League', 'Age']].sort_values('Rank', ascending = False).head(1000)
 
