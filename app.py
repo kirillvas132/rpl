@@ -105,9 +105,9 @@ def nas0(si, lig, kef):
         df[i] = pd.to_numeric(df[i], errors='coerce').fillna(0).astype(float)
 
     if tm == "Ближе к основе":
-        df = df[(df['Minutes played']>0.5*df['Matches played'].max())]
+        df = df[(df['Minutes played']>0.7*df['Matches played'].max())]
     else:
-        df = df[(df['Minutes played']<=0.5*df['Minutes played'].max())]
+        df = df[(df['Minutes played']<=0.7*df['Minutes played'].max())]
 
     df.rename(columns={'Unnamed: 1':'Name'}, inplace=True) 
     data = df
