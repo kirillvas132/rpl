@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[4]:
 
 
 #!/usr/bin/env python
@@ -66,20 +66,33 @@ data1 = ['Unnamed: 0', 'InStat Index', 'Matches played',
          'Challenges in attack won. %',
          'Successful dribbles. %', 'Tackles won. %','Fouls',
        'Fouls suffered', 'Key passes accurate',"Shots on target. %"]
-
+data34 = ['Goals', 'Assists', 'Expected assists', 'Offsides', 'Yellow cards',
+           'Red cards', 'Shots', 'Penalty',
+         'Passes',
+           'Key passes', 'Crosses', 
+           'Lost balls', 'Lost balls in own half', 'Ball recoveries',
+           "Ball recoveries in opponent's half", 'xG (Expected goals)',
+           'Challenges', 'Attacking challenges',
+           'Air challenges', 'Dribbles', 'Tackles', 'Ball interceptions',
+           'Free ball pick ups', 'Defensive challenges', 'Fouls',
+           'Fouls suffered', 'Key passes accurate']
 
 # In[7]:
+optionals_pt = st.expander("Playing time:", True)
+pt = optionals_pt.slider(
+    'Select a range',
+    0.0, 1000.0, (1000.0, 2500.0))
 
 
-optionals_team = st.expander("Игровое время", False)
-tm = optionals_team.selectbox("Выберите:", ("Ближе к основе", "Ближе к запасу"))
+#optionals_team = st.expander("Игровое время", False)
+#tm = optionals_team.selectbox("Выберите:", ("Ближе к основе", "Ближе к запасу"))
 
 
 # In[8]:
 
 
-if st.button('заменить игроков по игровому времени'):
-    st.experimental_memo.clear()
+#if st.button('заменить игроков по игровому времени'):
+#    st.experimental_memo.clear()
 
 
 # In[3]:
@@ -88,10 +101,11 @@ if st.button('заменить игроков по игровому времен
 
 
 
-#@st.experimental_memo
+#@st.cache_data
 def nas0(lig, kef):
     data = pd.DataFrame()#global data
     global data1
+    global data34
     global tm
 
     spreadsheet_id = "1HJ6JxCxHm4OJMMcDo2w9uMldHk3yich7acxizJKMK8k"
@@ -108,12 +122,18 @@ def nas0(lig, kef):
 
     for i in data1:
         df[i] = pd.to_numeric(df[i], errors='coerce').fillna(0).astype(float)
+    
 
-    if tm == "Ближе к основе":
-        df = df[(df['Minutes played']>1.3*df['Minutes played'].mean())]
-    else:
-        df = df[(df['Minutes played']<=1.3*df['Minutes played'].mean())]
-
+    for i in data34:
+        df[i] = df[i]/(df['Minutes played']/90)
+    
+    #if tm == "Ближе к основе":
+      #  df = df[(df['Minutes played']>1.3*df['Minutes played'].mean())]
+   # else:
+     #   df = df[(df['Minutes played']<=1.3*df['Minutes played'].mean())]
+    df = df.rename(columns={'Minutes played': 'Minutes_played'})
+    df = df.query('@pt[0]<=Minutes_played<=@pt[1]')
+    
     df.rename(columns={'Unnamed: 1':'Name'}, inplace=True) 
     data = df
 
@@ -143,10 +163,10 @@ with col1:
 data = nas0('РПЛ', 1)
 data2 = data
 datagr = data2
-data2 = data2[['Name','Position','sh','Defence','Recovery','Distribution','Take on','air','Chance creation','Rank','Team', 'League', 'Age']].sort_values('Rank', ascending = False).head(1000)
+data2 = data2[['Name','Position','sh','Defence','Recovery','Distribution','Take on','air','Chance creation','Rank','Team', 'League', 'Age', 'Minutes_played']].sort_values('Rank', ascending = False).head(1000)
 
 
-# In[2]:
+# In[ ]:
 
 
 league = st.multiselect("Выбор лиг:", data2["League"].unique(), default=data2["League"].unique())
