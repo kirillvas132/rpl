@@ -129,9 +129,21 @@ def nas0(si, lig, kef):
 
 # In[13]:
 
+col1, col2, col3, col4 = st.columns(4)
+with col1:
+    st.subheader('Российские лиги')
 
+col1, col2, col3, col4 = st.columns(4)
+with col1:
+    Russia = st.checkbox('РПЛ')
+    if Russia:
+        data = nas0('1PP9AT1gxSpEPXWj8OjidLK17s-w17Mp5XfJvYhKDsO4', 'РПЛ', 1)
+        data2=data2.append(data, sort=False)
 datagr = data2
+
 try:
+    data2 = data2[['Name','Position','sh','Defence','Recovery','Distribution','Take on','air','Chance creation','Rank','Team', 'League', 'Age']].sort_values('Rank', ascending = False).head(1000)
+except:
     data = nas0('1HJ6JxCxHm4OJMMcDo2w9uMldHk3yich7acxizJKMK8k', 'РПЛ', 1)
     data2=data2.append(data, sort=False)
     data2 = data2[['Name','Position','sh','Defence','Recovery','Distribution','Take on','air','Chance creation','Rank','Team', 'League', 'Age']].sort_values('Rank', ascending = False).head(1000)
