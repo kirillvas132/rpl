@@ -4,6 +4,12 @@
 # In[1]:
 
 
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[1]:
+
+
 import pandas as pd
 #import openpyxl
 import seaborn as sns
@@ -46,21 +52,20 @@ data2 = pd.DataFrame()
 
 
 data1 = ['Unnamed: 0', 'InStat Index', 'Matches played',
-       'Minutes played', 'Starting lineup appearances', 'Substitute out',
-       'Substitutes in', 'Goals', 'Assists', 'Expected assists', 'Offsides', 'Yellow cards',
-       'Red cards', 'Shots', 'Shots on target', 'Penalty', 'Chances',
-       'Penalties\n scored', 'Penalty kicks scored. %', 'Passes',
-       'Accurate passes. %', 'Key passes', 'Crosses', 'Accurate crosses. %', 'Crosses accurate',
+       'Minutes played', 'Starting lineup appearances',
+        'Goals', 'Assists', 'Expected assists', 'Offsides', 'Yellow cards',
+       'Red cards', 'Shots', 'Penalty',
+     'Penalty kicks scored. %', 'Passes',
+       'Accurate passes. %', 'Key passes', 'Crosses', 'Accurate crosses. %',
        'Lost balls', 'Lost balls in own half', 'Ball recoveries',
        "Ball recoveries in opponent's half", 'xG (Expected goals)',
        'Challenges', 'Challenges won. %', 'Attacking challenges',
        'Air challenges', 'Dribbles', 'Tackles', 'Ball interceptions',
-       'Free ball pick ups', 'Defensive challenges', 'Defensive challenges won', 
-       'Challenges in defence won. %', 'Age', 'Height', 'Weight','Air challenges won. %',
-       'Air challenges won', 'Challenges in attack won. %',
-       'Attacking challenges won', 'Successful dribbles. %',
-       'Dribbles successful', 'Tackles won. %', 'Tackles successful', 'Fouls',
-       'Fouls suffered', 'Key passes accurate', 'Accurate passes']
+       'Free ball pick ups', 'Defensive challenges',
+       'Challenges in defence won. %', 'Age', 'Height','Air challenges won. %',
+         'Challenges in attack won. %',
+         'Successful dribbles. %', 'Tackles won. %','Fouls',
+       'Fouls suffered', 'Key passes accurate',"Shots on target. %"]
 
 
 # In[7]:
@@ -83,13 +88,13 @@ if st.button('заменить игроков по игровому времен
 
 
 
-@st.experimental_memo
-def nas0(si, lig, kef):
+#@st.experimental_memo
+def nas0(lig, kef):
     data = pd.DataFrame()#global data
     global data1
     global tm
 
-    spreadsheet_id = si
+    spreadsheet_id = "1HJ6JxCxHm4OJMMcDo2w9uMldHk3yich7acxizJKMK8k"
     file_name = 'https://docs.google.com/spreadsheets/d/{}/export?format=csv'.format(spreadsheet_id)
     r = requests.get(file_name)
     df = pd.read_csv(BytesIO(r.content))
@@ -105,20 +110,20 @@ def nas0(si, lig, kef):
         df[i] = pd.to_numeric(df[i], errors='coerce').fillna(0).astype(float)
 
     if tm == "Ближе к основе":
-        df = df[(df['Matches played']>0.5*df['Matches played'].max()) & (df['Starting lineup appearances']>df['Substitutes in'])]
+        df = df[(df['Minutes played']>1.3*df['Minutes played'].mean())]
     else:
-        df = df[(df['Matches played']<=0.5*df['Matches played'].max()) | (df['Starting lineup appearances']<=df['Substitutes in'])]
+        df = df[(df['Minutes played']<=1.3*df['Minutes played'].mean())]
 
     df.rename(columns={'Unnamed: 1':'Name'}, inplace=True) 
     data = df
 
     for i in data: 
-        data['sh'] = kef*(0.7*data['xG (Expected goals)'] + 0.5*data['Shots on target'] + data['Goals'])/((0.7*data['xG (Expected goals)'] + 0.5*data['Shots on target'] + data['Goals']).max())
-        data['Defence'] = kef*(((data['Challenges in defence won. %']+data['Defensive challenges won']*2)+(data['Tackles won. %']+data['Tackles successful']*2))/((data['Challenges in defence won. %']+data['Defensive challenges won']*2)+(data['Tackles won. %']+data['Tackles successful']*2)).max())
-        data['air'] = kef*((data['Air challenges won. %']+data['Air challenges won']*2)/((data['Air challenges won. %']+data['Air challenges won']*2).max()))
+        data['sh'] = kef*(0.7*data['xG (Expected goals)'] + 0.5*data['Shots']/100*data['Shots on target. %']/100 + data['Goals'])/((0.7*data['xG (Expected goals)'] + 0.5*data['Shots']/100*data['Shots on target. %']/100 + data['Goals']).max())
+        data['Defence'] = kef*(((data['Challenges in defence won. %']+0.01*data['Challenges in defence won. %']*data['Defensive challenges']*2)+(data['Tackles won. %']+0.01*data['Tackles won. %']*data['Tackles']*2))/((data['Challenges in defence won. %']+0.01*data['Challenges in defence won. %']*data['Defensive challenges']*2)+(data['Tackles won. %']+0.01*data['Tackles won. %']*data['Tackles']*2)).max())
+        data['air'] = kef*((data['Air challenges won. %']+0.01*data['Air challenges won. %']*data['Air challenges']*2)/((data['Air challenges won. %']+0.01*data['Air challenges won. %']*data['Air challenges']*2).max()))
         data['Recovery'] = kef*((data['Ball interceptions']+data['Ball recoveries']+data['Free ball pick ups'])/((data['Ball interceptions']+data['Free ball pick ups']+data['Ball recoveries']).max()))
-        data['Distribution'] = kef*(data['Accurate passes. %']+data['Accurate passes']+0.3*(data['Accurate crosses. %']+data['Crosses accurate']*1.3))/((data['Accurate passes. %']+data['Accurate passes']+0.3*(data['Accurate crosses. %']+data['Crosses accurate']*1.3)).max())
-        data['Take on'] = kef*((data['Successful dribbles. %']+data['Dribbles successful']*10)/((data['Successful dribbles. %']+data['Dribbles successful']*10).max()))
+        data['Distribution'] = kef*(data['Accurate passes. %']+0.01*data['Accurate passes. %']*data['Passes']+0.3*(data['Accurate crosses. %']+0.01*data['Accurate crosses. %']*data['Crosses']*1.3))/((data['Accurate passes. %']+0.01*data['Accurate passes. %']*data['Passes']+0.3*(data['Accurate crosses. %']+0.01*data['Accurate crosses. %']*data['Crosses']*1.3)).max())
+        data['Take on'] = kef*((data['Successful dribbles. %']+0.01*data['Successful dribbles. %']*data['Dribbles']*10)/((data['Successful dribbles. %']+0.01*data['Successful dribbles. %']*data['Dribbles']*10).max()))
         data['Chance creation'] = kef*(0.9*data['Key passes']+data['Assists']+0.9*data['Expected assists'])/(0.9*data['Key passes']+data['Assists']+0.9*data['Expected assists']).max()
         data['Rank'] = data['sh']+data['Defence']+data['Recovery']+data['Distribution']+data['Take on']+data['air']+data['Chance creation']
 
@@ -135,225 +140,13 @@ def nas0(si, lig, kef):
 col1, col2, col3, col4 = st.columns(4)
 with col1:
     st.subheader('Российские лиги')
-
-col1, col2, col3, col4 = st.columns(4)
-with col1:
-    Russia = st.checkbox('РПЛ')
-    if Russia:
-        data = nas0('1HJ6JxCxHm4OJMMcDo2w9uMldHk3yich7acxizJKMK8k', 'РПЛ', 1)
-        data2=data2.append(data, sort=False)
-
-
-    FNL = st.checkbox('ФНЛ-1')
-    if FNL:
-        data = nas0('13s54--uFxqSd9s1ZbDiBwKZDBfDYTQIKFbV_eNbjRqA', 'ФНЛ-1', 0.85)
-        data2=data2.append(data, sort=False)
-
-with col2:
-    FNL21 = st.checkbox('ФНЛ-2.Г1')
-    if FNL21:
-        data = nas0('1ypxTAXdFWDkqLsmVs6fbN4kjSz-ogfxiaNYugfXtBnM', 'ФНЛ-2.Г1', 0.79)
-        data2=data2.append(data, sort=False)
-
-
-    FNL22A = st.checkbox('ФНЛ-2.Г2А')
-    if FNL22A:
-        data = nas0('1lhFsCc1ci5SeDth0gxiolbBxQA6gpeyHrVRjJyXW_kg', 'ФНЛ-2.Г2А', 0.79)
-        data2=data2.append(data, sort=False)
-
-with col3:        
-    FNL22B = st.checkbox('ФНЛ-2.Г2Б')
-    if FNL22B:
-        data = nas0('1_HG4gwHk7Sndbopd8jSTzVRgUFAJZKOxyH75bziOwCE', 'ФНЛ-2.Г2Б', 0.79)
-        data2=data2.append(data, sort=False)
-
-
-    FNL23A = st.checkbox('ФНЛ-2.Г3А')
-    if FNL23A:
-        data = nas0('1dpmHGeKXoRoqU_UtjiTbWhF07Qp68_Y8GgwBnDrtBLk', 'ФНЛ-2.Г3А', 0.79)
-        data2=data2.append(data, sort=False)
-
-with col4:
-    FNL23B = st.checkbox('ФНЛ-2.Г3Б')
-    if FNL23B:
-        data = nas0('188lgKi6O1wLAjHxngz4QccgG3WKcho4YORYSgwYBhtg', 'ФНЛ-2.Г3Б', 0.79)
-        data2=data2.append(data, sort=False)
-
-
-    FNL24 = st.checkbox('ФНЛ-2.Г4')
-    if FNL24:
-        data = nas0('1PT4ysCfLiTI9--XOGEd_yk0x-QMqJmiDglug-Ig6hHI', 'ФНЛ-2.Г4', 0.79)
-        data2=data2.append(data, sort=False)
-        
-
-
-# In[11]:
-
-
-col1, col2, col3, col4 = st.columns(4)
-with col1:
-    st.subheader('Доступные лиги')
-col1, col2, col3, col4 = st.columns(4)
-
-with col1:
-
-    Belarus = st.checkbox('Беларусь')
-    if Belarus:
-        data = nas0('1jjimtmG-kARVsU4AdIvGvAD5dGu7oNSfPJ40jvIqA5g', 'Беларусь', 0.8)
-        data2=data2.append(data, sort=False)
-        
-        
-    Kazakhstan = st.checkbox('Казахстан')
-    if Kazakhstan:
-        data = nas0('1bDjWx9dTUBhOL0wnvUfy4YVgQxyIYDe37VsrYTsYWZM', 'Казахстан', 0.9)
-        data2=data2.append(data, sort=False)
-
-with col2:
-
-    Algir = st.checkbox('Алжир')
-    if Algir:
-        data = nas0('1c7VRfsMv11IQxjBDFJT8g_DUKpvhMITYbZyUK61toS0', 'Алжир', 0.92)
-        data2=data2.append(data, sort=False)
-
-    Tunis = st.checkbox('Тунис')
-    if Tunis:
-        data = nas0('1I3vpewXF53iBWNekiomhrSpLtb3DIZdhxRqR0iLdkq4', 'Тунис', 0.9)
-        data2=data2.append(data, sort=False)
-        
-    Marocco = st.checkbox('Марокко')
-    if Marocco:
-        data = nas0('1MMIFty4gz1-zmUjO-X440958HJdsH9j4f5iQPEDDS7Q', 'Марокко', 0.92)
-        data2=data2.append(data, sort=False)
-        
-    Egypt = st.checkbox('Египет')
-    if Egypt:
-        data = nas0('1yS3E5BALe_Ff9rLaIQoUoAcAPvGJbkIwq9wV5epnpbM', 'Египет', 0.96)
-        data2=data2.append(data, sort=False)
-        
-        
-    Israel = st.checkbox('Израиль')
-    if Israel:
-        data = nas0('1k2PKkYmS4cU-i2nZjmy6QCrppsoQ9pVBSKbksy274K4', 'Израиль', 0.96)
-        data2=data2.append(data, sort=False)
-    
-
-with col3:
-    Bosnia = st.checkbox('Босния')
-    if Bosnia:
-        data = nas0('1AUIZ8EV3SPTG1FZrDaLBLIp9lEdSrcyEohnJV1Amrrk', 'Босния', 0.91)
-        data2=data2.append(data, sort=False)
-        
-        
-    Serbia = st.checkbox('Сербия')
-    if Serbia:
-        data = nas0('1Plbk34Q6J-YdfySHvdr9r92UctgdXOrieTcC7bcvwc0', 'Сербия', 0.97)
-        data2=data2.append(data, sort=False)
-
-    Latvia = st.checkbox('Латвия')
-    if Latvia:
-        data = nas0('1H6FsaJdnOZ355mnmfjAhl14xxS8x1czRGDX9ypkAxxs', 'Латвия', 0.86)
-        data2=data2.append(data, sort=False)
-        
-    Albania = st.checkbox('Албания')
-    if Albania:
-        data = nas0('1WQhUawERQlV5GozDog-brksKxD_Qt7rbf1JDrNncVOo', 'Албания', 0.86)
-        data2=data2.append(data, sort=False)
-        
-    Croatia = st.checkbox('Хорватия')
-    if Croatia:
-        data = nas0('1z7OvEMRY_CmJvrCvwNxnegjGAzQjNChwpwWoyrXrgYU', 'Хорватия', 1)
-        data2=data2.append(data, sort=False)
-        
-        
-    Cyprus = st.checkbox('Кипр')
-    if Cyprus:
-        data = nas0('15dQ89Y9Cw3IO8EFnubWlVVod8qQgf7UIBeZrQc3Ya4Y', 'Кипр', 0.89)
-        data2=data2.append(data, sort=False)
-    
-        
-with col4:
-
-
-    Columbia = st.checkbox('Колумбия')
-    if Columbia:
-        data = nas0('1sJzYr9Aw_w12a0zEmwy3Ofxyqf8nDYAVWxDOGfOP4QU', 'Columbia', 1)
-        data2=data2.append(data, sort=False)
-
-    Brazil = st.checkbox('Бразилия')
-    if Brazil:
-        data = nas0('1-Nt7AQfr2FkFxGXCDEATo5JUzltfaLf4aSXlkqkEEUc', 'Brazil', 1)
-        data2=data2.append(data, sort=False)
-
-    Venezuela = st.checkbox('Венесуэла')
-    if Venezuela:
-        data = nas0('1fCQ8MPz1sgYUctDeXgFveUuffNtbZZxm81GZT6A2V-M', 'Venezuela', 0.99)
-        data2=data2.append(data, sort=False)
-
-        
-    Chile = st.checkbox('Чили')
-    if Chile:
-        data = nas0('1XXo8c3tznBgRgrPEOenTjaIpvr74OC9XWXOxBqdCroU', 'Чили', 1)
-        data2=data2.append(data, sort=False)
-        
-    Ecuador = st.checkbox('Эквадор')
-    if Ecuador:
-        data = nas0('1fSZ6EBZX58KsK4Ni9KkpywFYVP-o-E8RhXK7d4ktU2g', 'Эквадор', 0.98)
-        data2=data2.append(data, sort=False)
-        
-        
-    Перу = st.checkbox('Перу')
-    if Перу:
-        data = nas0('1eLA_OH5so6q5P9UiMqNVaOwYs1AJjfoGuoKVkkE5aec', 'Перу', 0.98)
-        data2=data2.append(data, sort=False)
-        
-        
-    Парагвай = st.checkbox('Парагвай')
-    if Парагвай:
-        data = nas0('1BQ36-xgZV37wMJ4L91mLytTAFjXB2dGMCYC4r1niJS0', 'Парагвай', 0.978)
-        data2=data2.append(data, sort=False)
-
-# In[12]:
-
-
-col1, col2, col3, col4 = st.columns(4)
-with col1:
-    st.subheader('Молодежные лиги')
-col1, col2, col3, col4 = st.columns(4)
-with col1:
-    MFL = st.checkbox('МФЛ')
-    if MFL:
-        data = nas0('1KknIaFYhUHZGcUbi4VDpeZxMyYyCnUDvv1E5Y14uQ-Q', 'МФЛ', 0.77)
-        data2=data2.append(data, sort=False)
-        
-with col2:       
-    UFL1 = st.checkbox('ЮФЛ-1')
-    if UFL1:
-        data = nas0('1ri0x3BmE6wMkxw30p6IfEhOdzKrj9v0XPztHIsv-Elo', 'ЮФЛ-1', 0.72)
-        data2=data2.append(data, sort=False)
-
-with col3: 
-    UFL2 = st.checkbox('ЮФЛ-2')
-    if UFL2:
-        data = nas0('1bYg6Ny2GkG6aY4INhVldEyVj1Y9DeWsBVsqZhgvA390', 'ЮФЛ-2', 0.65)
-        data2=data2.append(data, sort=False)
-        
-
-
-# In[13]:
-
-
+data = nas0('РПЛ', 1)
+data2 = data
 datagr = data2
-try:
-    data2 = data2[['Name','Position','sh','Defence','Recovery','Distribution','Take on','air','Chance creation','Rank','Team', 'League', 'Age']].sort_values('Rank', ascending = False).head(1000)
-except:
-    st.error('Выберите хотя бы одну лигу, автоматически добавлена РПЛ')
-    st.error('Максимальное количество игроков в выборке = 1000, сайт в стадии разработки')
-    data = nas0('1HJ6JxCxHm4OJMMcDo2w9uMldHk3yich7acxizJKMK8k', 'РПЛ', 1)
-    data2=data2.append(data, sort=False)
-    data2 = data2[['Name','Position','sh','Defence','Recovery','Distribution','Take on','air','Chance creation','Rank','Team', 'League', 'Age']].sort_values('Rank', ascending = False).head(1000)
+data2 = data2[['Name','Position','sh','Defence','Recovery','Distribution','Take on','air','Chance creation','Rank','Team', 'League', 'Age']].sort_values('Rank', ascending = False).head(1000)
 
 
-# In[14]:
+# In[2]:
 
 
 league = st.multiselect("Выбор лиг:", data2["League"].unique(), default=data2["League"].unique())
@@ -512,7 +305,7 @@ df_selection1 = df_selection1.reset_index(drop=True)
 
 if st.button('Анализировать'):
     ps=datagr.query("Name == @name & Position==@positionpp")
-    ps = ps[['Name','Age', 'Foot', 'Height','Weight','Nationality', 'Team']]
+    ps = ps[['Name','Age', 'Foot', 'Height','Nationality', 'Team']]
     st.dataframe(ps)
     
     fig = go.Figure()
@@ -563,28 +356,36 @@ st.markdown('График строится исходя из выбранной 
 
 try:
     GA_selection1 = datagr.query("League == @leaguepp & Position == @positionpp")
-    i = st.selectbox("Выберите 1 параметр:", GA_selection1[['Goals', 'Assists', 'Shots', 'Shots on target', 'Passes',
+    i = st.selectbox("Выберите 1 параметр:", GA_selection1[['Unnamed: 0', 'InStat Index', 'Matches played',
+                                                           'Minutes played', 'Starting lineup appearances',
+                                                            'Goals', 'Assists', 'Expected assists', 'Offsides', 'Yellow cards',
+                                                           'Red cards', 'Shots', 'Penalty',
+                                                         'Penalty kicks scored. %', 'Passes',
                                                            'Accurate passes. %', 'Key passes', 'Crosses', 'Accurate crosses. %',
                                                            'Lost balls', 'Lost balls in own half', 'Ball recoveries',
                                                            "Ball recoveries in opponent's half", 'xG (Expected goals)',
                                                            'Challenges', 'Challenges won. %', 'Attacking challenges',
                                                            'Air challenges', 'Dribbles', 'Tackles', 'Ball interceptions',
                                                            'Free ball pick ups', 'Defensive challenges',
-                                                           'Challenges in defence won. %', 'Air challenges won. %',
-                                                           'Air challenges won', 'Challenges in attack won. %',
-                                                           'Attacking challenges won', 'Successful dribbles. %',
-                                                           'Dribbles successful', 'Tackles won. %', 'Tackles successful','Key passes accurate', 'Accurate passes']].columns)
-    j = st.selectbox("Выберите 2 параметр:", GA_selection1[['Goals', 'Assists', 'Shots', 'Shots on target', 'Passes',
+                                                           'Challenges in defence won. %', 'Age', 'Height','Air challenges won. %',
+                                                             'Challenges in attack won. %',
+                                                             'Successful dribbles. %', 'Tackles won. %','Fouls',
+                                                           'Fouls suffered', 'Key passes accurate',"Shots on target. %"]].columns)
+    j = st.selectbox("Выберите 2 параметр:", GA_selection1[['Unnamed: 0', 'InStat Index', 'Matches played',
+                                                           'Minutes played', 'Starting lineup appearances',
+                                                            'Goals', 'Assists', 'Expected assists', 'Offsides', 'Yellow cards',
+                                                           'Red cards', 'Shots', 'Penalty',
+                                                         'Penalty kicks scored. %', 'Passes',
                                                            'Accurate passes. %', 'Key passes', 'Crosses', 'Accurate crosses. %',
                                                            'Lost balls', 'Lost balls in own half', 'Ball recoveries',
                                                            "Ball recoveries in opponent's half", 'xG (Expected goals)',
                                                            'Challenges', 'Challenges won. %', 'Attacking challenges',
                                                            'Air challenges', 'Dribbles', 'Tackles', 'Ball interceptions',
                                                            'Free ball pick ups', 'Defensive challenges',
-                                                           'Challenges in defence won. %', 'Air challenges won. %',
-                                                           'Air challenges won', 'Challenges in attack won. %',
-                                                           'Attacking challenges won', 'Successful dribbles. %',
-                                                           'Dribbles successful', 'Tackles won. %', 'Tackles successful','Key passes accurate', 'Accurate passes']].columns)
+                                                           'Challenges in defence won. %', 'Age', 'Height','Air challenges won. %',
+                                                             'Challenges in attack won. %',
+                                                             'Successful dribbles. %', 'Tackles won. %','Fouls',
+                                                           'Fouls suffered', 'Key passes accurate',"Shots on target. %"]].columns)
 except:
     pass
 
@@ -618,3 +419,10 @@ try:
         st.pyplot(petalplot(GA_selection1, i,j))
 except:
     pass
+
+
+# In[ ]:
+
+
+
+
