@@ -19,7 +19,25 @@ import matplotlib.pyplot as plt
 
 
 st.set_page_config(page_title="Аналитика", page_icon=":bar_chart:", layout="wide")
-  
+
+
+# In[4]:
+
+
+row0_spacer1, row0_1, row0_spacer2, row0_2, row0_spacer3 = st.columns((.1, 2.3, .1, 1.3, .1))
+with row0_1:
+    st.title('Анализ футболистов на основе статистических показателей')
+with row0_2:
+    st.text("")
+    st.subheader('App by [Kirill Vasyuchkov](https://vk.com/id115198961)')
+row3_spacer1, row3_1, row3_spacer2 = st.columns((.1, 3.2, .1))
+with row3_1:
+    st.markdown('Используются средние показатели за 90 минут [InStat](https://instatsport.com/)(последние обновления базы октябрь-молодежки, ноябрь-декабрь взрослые лиги)')
+    
+
+
+# In[5]:
+
 
 data2 = pd.DataFrame()
 
@@ -63,6 +81,8 @@ if st.button('заменить игроков по игровому времен
 
 
 
+
+
 @st.experimental_memo
 def nas0(si, lig, kef):
     data = pd.DataFrame()#global data
@@ -85,9 +105,9 @@ def nas0(si, lig, kef):
         df[i] = pd.to_numeric(df[i], errors='coerce').fillna(0).astype(float)
 
     if tm == "Ближе к основе":
-        df = df[(df['Minutes played']>0.7*df['Minutes played'].max())]
+        df = df[(df['Matches played']>0.5*df['Matches played'].max()) & (df['Starting lineup appearances']>df['Substitutes in'])]
     else:
-        df = df[(df['Minutes played']<=0.7*df['Minutes played'].max())]
+        df = df[(df['Matches played']<=0.5*df['Matches played'].max()) | (df['Starting lineup appearances']<=df['Substitutes in'])]
 
     df.rename(columns={'Unnamed: 1':'Name'}, inplace=True) 
     data = df
@@ -107,7 +127,10 @@ def nas0(si, lig, kef):
 
     return data    
 
-# In[13]:
+
+
+# In[10]:
+
 
 col1, col2, col3, col4 = st.columns(4)
 with col1:
@@ -119,12 +142,213 @@ with col1:
     if Russia:
         data = nas0('1HJ6JxCxHm4OJMMcDo2w9uMldHk3yich7acxizJKMK8k', 'РПЛ', 1)
         data2=data2.append(data, sort=False)
-datagr = data2
 
+
+    FNL = st.checkbox('ФНЛ-1')
+    if FNL:
+        data = nas0('13s54--uFxqSd9s1ZbDiBwKZDBfDYTQIKFbV_eNbjRqA', 'ФНЛ-1', 0.85)
+        data2=data2.append(data, sort=False)
+
+with col2:
+    FNL21 = st.checkbox('ФНЛ-2.Г1')
+    if FNL21:
+        data = nas0('1ypxTAXdFWDkqLsmVs6fbN4kjSz-ogfxiaNYugfXtBnM', 'ФНЛ-2.Г1', 0.79)
+        data2=data2.append(data, sort=False)
+
+
+    FNL22A = st.checkbox('ФНЛ-2.Г2А')
+    if FNL22A:
+        data = nas0('1lhFsCc1ci5SeDth0gxiolbBxQA6gpeyHrVRjJyXW_kg', 'ФНЛ-2.Г2А', 0.79)
+        data2=data2.append(data, sort=False)
+
+with col3:        
+    FNL22B = st.checkbox('ФНЛ-2.Г2Б')
+    if FNL22B:
+        data = nas0('1_HG4gwHk7Sndbopd8jSTzVRgUFAJZKOxyH75bziOwCE', 'ФНЛ-2.Г2Б', 0.79)
+        data2=data2.append(data, sort=False)
+
+
+    FNL23A = st.checkbox('ФНЛ-2.Г3А')
+    if FNL23A:
+        data = nas0('1dpmHGeKXoRoqU_UtjiTbWhF07Qp68_Y8GgwBnDrtBLk', 'ФНЛ-2.Г3А', 0.79)
+        data2=data2.append(data, sort=False)
+
+with col4:
+    FNL23B = st.checkbox('ФНЛ-2.Г3Б')
+    if FNL23B:
+        data = nas0('188lgKi6O1wLAjHxngz4QccgG3WKcho4YORYSgwYBhtg', 'ФНЛ-2.Г3Б', 0.79)
+        data2=data2.append(data, sort=False)
+
+
+    FNL24 = st.checkbox('ФНЛ-2.Г4')
+    if FNL24:
+        data = nas0('1PT4ysCfLiTI9--XOGEd_yk0x-QMqJmiDglug-Ig6hHI', 'ФНЛ-2.Г4', 0.79)
+        data2=data2.append(data, sort=False)
+        
+
+
+# In[11]:
+
+
+col1, col2, col3, col4 = st.columns(4)
+with col1:
+    st.subheader('Доступные лиги')
+col1, col2, col3, col4 = st.columns(4)
+
+with col1:
+
+    Belarus = st.checkbox('Беларусь')
+    if Belarus:
+        data = nas0('1jjimtmG-kARVsU4AdIvGvAD5dGu7oNSfPJ40jvIqA5g', 'Беларусь', 0.8)
+        data2=data2.append(data, sort=False)
+        
+        
+    Kazakhstan = st.checkbox('Казахстан')
+    if Kazakhstan:
+        data = nas0('1bDjWx9dTUBhOL0wnvUfy4YVgQxyIYDe37VsrYTsYWZM', 'Казахстан', 0.9)
+        data2=data2.append(data, sort=False)
+
+with col2:
+
+    Algir = st.checkbox('Алжир')
+    if Algir:
+        data = nas0('1c7VRfsMv11IQxjBDFJT8g_DUKpvhMITYbZyUK61toS0', 'Алжир', 0.92)
+        data2=data2.append(data, sort=False)
+
+    Tunis = st.checkbox('Тунис')
+    if Tunis:
+        data = nas0('1I3vpewXF53iBWNekiomhrSpLtb3DIZdhxRqR0iLdkq4', 'Тунис', 0.9)
+        data2=data2.append(data, sort=False)
+        
+    Marocco = st.checkbox('Марокко')
+    if Marocco:
+        data = nas0('1MMIFty4gz1-zmUjO-X440958HJdsH9j4f5iQPEDDS7Q', 'Марокко', 0.92)
+        data2=data2.append(data, sort=False)
+        
+    Egypt = st.checkbox('Египет')
+    if Egypt:
+        data = nas0('1yS3E5BALe_Ff9rLaIQoUoAcAPvGJbkIwq9wV5epnpbM', 'Египет', 0.96)
+        data2=data2.append(data, sort=False)
+        
+        
+    Israel = st.checkbox('Израиль')
+    if Israel:
+        data = nas0('1k2PKkYmS4cU-i2nZjmy6QCrppsoQ9pVBSKbksy274K4', 'Израиль', 0.96)
+        data2=data2.append(data, sort=False)
+    
+
+with col3:
+    Bosnia = st.checkbox('Босния')
+    if Bosnia:
+        data = nas0('1AUIZ8EV3SPTG1FZrDaLBLIp9lEdSrcyEohnJV1Amrrk', 'Босния', 0.91)
+        data2=data2.append(data, sort=False)
+        
+        
+    Serbia = st.checkbox('Сербия')
+    if Serbia:
+        data = nas0('1Plbk34Q6J-YdfySHvdr9r92UctgdXOrieTcC7bcvwc0', 'Сербия', 0.97)
+        data2=data2.append(data, sort=False)
+
+    Latvia = st.checkbox('Латвия')
+    if Latvia:
+        data = nas0('1H6FsaJdnOZ355mnmfjAhl14xxS8x1czRGDX9ypkAxxs', 'Латвия', 0.86)
+        data2=data2.append(data, sort=False)
+        
+    Albania = st.checkbox('Албания')
+    if Albania:
+        data = nas0('1WQhUawERQlV5GozDog-brksKxD_Qt7rbf1JDrNncVOo', 'Албания', 0.86)
+        data2=data2.append(data, sort=False)
+        
+    Croatia = st.checkbox('Хорватия')
+    if Croatia:
+        data = nas0('1z7OvEMRY_CmJvrCvwNxnegjGAzQjNChwpwWoyrXrgYU', 'Хорватия', 1)
+        data2=data2.append(data, sort=False)
+        
+        
+    Cyprus = st.checkbox('Кипр')
+    if Cyprus:
+        data = nas0('15dQ89Y9Cw3IO8EFnubWlVVod8qQgf7UIBeZrQc3Ya4Y', 'Кипр', 0.89)
+        data2=data2.append(data, sort=False)
+    
+        
+with col4:
+
+
+    Columbia = st.checkbox('Колумбия')
+    if Columbia:
+        data = nas0('1sJzYr9Aw_w12a0zEmwy3Ofxyqf8nDYAVWxDOGfOP4QU', 'Columbia', 1)
+        data2=data2.append(data, sort=False)
+
+    Brazil = st.checkbox('Бразилия')
+    if Brazil:
+        data = nas0('1-Nt7AQfr2FkFxGXCDEATo5JUzltfaLf4aSXlkqkEEUc', 'Brazil', 1)
+        data2=data2.append(data, sort=False)
+
+    Venezuela = st.checkbox('Венесуэла')
+    if Venezuela:
+        data = nas0('1fCQ8MPz1sgYUctDeXgFveUuffNtbZZxm81GZT6A2V-M', 'Venezuela', 0.99)
+        data2=data2.append(data, sort=False)
+
+        
+    Chile = st.checkbox('Чили')
+    if Chile:
+        data = nas0('1XXo8c3tznBgRgrPEOenTjaIpvr74OC9XWXOxBqdCroU', 'Чили', 1)
+        data2=data2.append(data, sort=False)
+        
+    Ecuador = st.checkbox('Эквадор')
+    if Ecuador:
+        data = nas0('1fSZ6EBZX58KsK4Ni9KkpywFYVP-o-E8RhXK7d4ktU2g', 'Эквадор', 0.98)
+        data2=data2.append(data, sort=False)
+        
+        
+    Перу = st.checkbox('Перу')
+    if Перу:
+        data = nas0('1eLA_OH5so6q5P9UiMqNVaOwYs1AJjfoGuoKVkkE5aec', 'Перу', 0.98)
+        data2=data2.append(data, sort=False)
+        
+        
+    Парагвай = st.checkbox('Парагвай')
+    if Парагвай:
+        data = nas0('1BQ36-xgZV37wMJ4L91mLytTAFjXB2dGMCYC4r1niJS0', 'Парагвай', 0.978)
+        data2=data2.append(data, sort=False)
+
+# In[12]:
+
+
+col1, col2, col3, col4 = st.columns(4)
+with col1:
+    st.subheader('Молодежные лиги')
+col1, col2, col3, col4 = st.columns(4)
+with col1:
+    MFL = st.checkbox('МФЛ')
+    if MFL:
+        data = nas0('1KknIaFYhUHZGcUbi4VDpeZxMyYyCnUDvv1E5Y14uQ-Q', 'МФЛ', 0.77)
+        data2=data2.append(data, sort=False)
+        
+with col2:       
+    UFL1 = st.checkbox('ЮФЛ-1')
+    if UFL1:
+        data = nas0('1ri0x3BmE6wMkxw30p6IfEhOdzKrj9v0XPztHIsv-Elo', 'ЮФЛ-1', 0.72)
+        data2=data2.append(data, sort=False)
+
+with col3: 
+    UFL2 = st.checkbox('ЮФЛ-2')
+    if UFL2:
+        data = nas0('1bYg6Ny2GkG6aY4INhVldEyVj1Y9DeWsBVsqZhgvA390', 'ЮФЛ-2', 0.65)
+        data2=data2.append(data, sort=False)
+        
+
+
+# In[13]:
+
+
+datagr = data2
 try:
     data2 = data2[['Name','Position','sh','Defence','Recovery','Distribution','Take on','air','Chance creation','Rank','Team', 'League', 'Age']].sort_values('Rank', ascending = False).head(1000)
 except:
-    data = nas0('1HJ6JxCxHm4OJMMcDo2w9uMldHk3yich7acxizJKMK8k', 'РПЛ', 1)
+    st.error('Выберите хотя бы одну лигу, автоматически добавлена РПЛ')
+    st.error('Максимальное количество игроков в выборке = 1000, сайт в стадии разработки')
+    data = nas0('1PP9AT1gxSpEPXWj8OjidLK17s-w17Mp5XfJvYhKDsO4', 'РПЛ', 1)
     data2=data2.append(data, sort=False)
     data2 = data2[['Name','Position','sh','Defence','Recovery','Distribution','Take on','air','Chance creation','Rank','Team', 'League', 'Age']].sort_values('Rank', ascending = False).head(1000)
 
