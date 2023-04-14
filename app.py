@@ -63,9 +63,7 @@ if st.button('заменить игроков по игровому времен
 
 
 
-
-
-@st.experimental_memo
+#@st.experimental_memo
 def nas0(si, lig, kef):
     data = pd.DataFrame()#global data
     global data1
