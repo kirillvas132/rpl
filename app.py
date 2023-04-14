@@ -356,7 +356,7 @@ st.markdown('График строится исходя из выбранной 
 
 try:
     GA_selection1 = datagr.query("League == @leaguepp & Position == @positionpp")
-    i = st.selectbox("Выберите 1 параметр:", GA_selection1[['Unnamed: 0', 'InStat Index', 'Matches played',
+    i = st.selectbox("Выберите 1 параметр:", GA_selection1[['Matches played',
                                                            'Minutes played', 'Starting lineup appearances',
                                                             'Goals', 'Assists', 'Expected assists', 'Offsides', 'Yellow cards',
                                                            'Red cards', 'Shots', 'Penalty',
@@ -371,7 +371,7 @@ try:
                                                              'Challenges in attack won. %',
                                                              'Successful dribbles. %', 'Tackles won. %','Fouls',
                                                            'Fouls suffered', 'Key passes accurate',"Shots on target. %"]].columns)
-    j = st.selectbox("Выберите 2 параметр:", GA_selection1[['Unnamed: 0', 'InStat Index', 'Matches played',
+    j = st.selectbox("Выберите 2 параметр:", GA_selection1[['Matches played',
                                                            'Minutes played', 'Starting lineup appearances',
                                                             'Goals', 'Assists', 'Expected assists', 'Offsides', 'Yellow cards',
                                                            'Red cards', 'Shots', 'Penalty',
