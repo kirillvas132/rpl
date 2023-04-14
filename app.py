@@ -119,7 +119,7 @@ col1, col2, col3, col4 = st.columns(4)
 with col1:
     Russia = st.checkbox('РПЛ')
     if Russia:
-        data = nas0('1PP9AT1gxSpEPXWj8OjidLK17s-w17Mp5XfJvYhKDsO4', 'РПЛ', 1)
+        data = nas0('1HJ6JxCxHm4OJMMcDo2w9uMldHk3yich7acxizJKMK8k', 'РПЛ', 1)
         data2=data2.append(data, sort=False)
 datagr = data2
 
