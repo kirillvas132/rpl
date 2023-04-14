@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[4]:
+# In[1]:
 
 
 #!/usr/bin/env python
@@ -91,8 +91,8 @@ pt = optionals_pt.slider(
 # In[8]:
 
 
-#if st.button('заменить игроков по игровому времени'):
-#    st.experimental_memo.clear()
+if st.button('после каждой замены времени!'):
+    st.experimental_memo.clear()
 
 
 # In[3]:
@@ -166,7 +166,7 @@ datagr = data2
 data2 = data2[['Name','Position','sh','Defence','Recovery','Distribution','Take on','air','Chance creation','Rank','Team', 'League', 'Age', 'Minutes_played']].sort_values('Rank', ascending = False).head(1000)
 
 
-# In[ ]:
+# In[2]:
 
 
 league = st.multiselect("Выбор лиг:", data2["League"].unique(), default=data2["League"].unique())
@@ -374,40 +374,39 @@ st.markdown('График строится исходя из выбранной 
 # In[29]:
 
 
-try:
-    GA_selection1 = datagr.query("League == @leaguepp & Position == @positionpp")
-    i = st.selectbox("Выберите 1 параметр:", GA_selection1[['Matches played',
-                                                           'Minutes_played', 'Starting lineup appearances',
-                                                            'Goals', 'Assists', 'Expected assists', 'Offsides', 'Yellow cards',
-                                                           'Red cards', 'Shots', 'Penalty',
-                                                         'Penalty kicks scored. %', 'Passes',
-                                                           'Accurate passes. %', 'Key passes', 'Crosses', 'Accurate crosses. %',
-                                                           'Lost balls', 'Lost balls in own half', 'Ball recoveries',
-                                                           "Ball recoveries in opponent's half", 'xG (Expected goals)',
-                                                           'Challenges', 'Challenges won. %', 'Attacking challenges',
-                                                           'Air challenges', 'Dribbles', 'Tackles', 'Ball interceptions',
-                                                           'Free ball pick ups', 'Defensive challenges',
-                                                           'Challenges in defence won. %', 'Age', 'Height','Air challenges won. %',
-                                                             'Challenges in attack won. %',
-                                                             'Successful dribbles. %', 'Tackles won. %','Fouls',
-                                                           'Fouls suffered', 'Key passes accurate',"Shots on target. %"]].columns)
-    j = st.selectbox("Выберите 2 параметр:", GA_selection1[['Matches played',
-                                                           'Minutes_played', 'Starting lineup appearances',
-                                                            'Goals', 'Assists', 'Expected assists', 'Offsides', 'Yellow cards',
-                                                           'Red cards', 'Shots', 'Penalty',
-                                                         'Penalty kicks scored. %', 'Passes',
-                                                           'Accurate passes. %', 'Key passes', 'Crosses', 'Accurate crosses. %',
-                                                           'Lost balls', 'Lost balls in own half', 'Ball recoveries',
-                                                           "Ball recoveries in opponent's half", 'xG (Expected goals)',
-                                                           'Challenges', 'Challenges won. %', 'Attacking challenges',
-                                                           'Air challenges', 'Dribbles', 'Tackles', 'Ball interceptions',
-                                                           'Free ball pick ups', 'Defensive challenges',
-                                                           'Challenges in defence won. %', 'Age', 'Height','Air challenges won. %',
-                                                             'Challenges in attack won. %',
-                                                             'Successful dribbles. %', 'Tackles won. %','Fouls',
-                                                           'Fouls suffered', 'Key passes accurate',"Shots on target. %"]].columns)
-except:
-    pass
+
+GA_selection1 = datagr.query("League == @leaguepp & Position == @positionpp")
+i = st.selectbox("Выберите 1 параметр:", GA_selection1[['Matches played',
+                                                       'Minutes_played', 'Starting lineup appearances',
+                                                        'Goals', 'Assists', 'Expected assists', 'Offsides', 'Yellow cards',
+                                                       'Red cards', 'Shots', 'Penalty',
+                                                     'Penalty kicks scored. %', 'Passes',
+                                                       'Accurate passes. %', 'Key passes', 'Crosses', 'Accurate crosses. %',
+                                                       'Lost balls', 'Lost balls in own half', 'Ball recoveries',
+                                                       "Ball recoveries in opponent's half", 'xG (Expected goals)',
+                                                       'Challenges', 'Challenges won. %', 'Attacking challenges',
+                                                       'Air challenges', 'Dribbles', 'Tackles', 'Ball interceptions',
+                                                       'Free ball pick ups', 'Defensive challenges',
+                                                       'Challenges in defence won. %', 'Age', 'Height','Air challenges won. %',
+                                                         'Challenges in attack won. %',
+                                                         'Successful dribbles. %', 'Tackles won. %','Fouls',
+                                                       'Fouls suffered', 'Key passes accurate',"Shots on target. %"]].columns)
+j = st.selectbox("Выберите 2 параметр:", GA_selection1[['Matches played',
+                                                       'Minutes_played', 'Starting lineup appearances',
+                                                        'Goals', 'Assists', 'Expected assists', 'Offsides', 'Yellow cards',
+                                                       'Red cards', 'Shots', 'Penalty',
+                                                     'Penalty kicks scored. %', 'Passes',
+                                                       'Accurate passes. %', 'Key passes', 'Crosses', 'Accurate crosses. %',
+                                                       'Lost balls', 'Lost balls in own half', 'Ball recoveries',
+                                                       "Ball recoveries in opponent's half", 'xG (Expected goals)',
+                                                       'Challenges', 'Challenges won. %', 'Attacking challenges',
+                                                       'Air challenges', 'Dribbles', 'Tackles', 'Ball interceptions',
+                                                       'Free ball pick ups', 'Defensive challenges',
+                                                       'Challenges in defence won. %', 'Age', 'Height','Air challenges won. %',
+                                                         'Challenges in attack won. %',
+                                                         'Successful dribbles. %', 'Tackles won. %','Fouls',
+                                                       'Fouls suffered', 'Key passes accurate',"Shots on target. %"]].columns)
+
 
 
 # In[30]:
