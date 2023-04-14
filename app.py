@@ -101,7 +101,7 @@ pt = optionals_pt.slider(
 
 
 
-#@st.cache_data
+@st.cache_data
 def nas0(lig, kef):
     data = pd.DataFrame()#global data
     global data1
