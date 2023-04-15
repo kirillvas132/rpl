@@ -432,7 +432,7 @@ if st.button('start'):
 
 
     #petalplot(GA_selection1, 'Defensive challenges','Challenges in defence won. %')
-    st.pyplot(petalplot(GA_selection1, i,j))
+    st.pyplot(petalplot(GA_selection1, i,j), use_container_width=False)
 
 
 # In[ ]:
