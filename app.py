@@ -404,7 +404,7 @@ j = st.selectbox("Выберите 2 параметр:", GA_selection1[['Matches
 st.set_option('deprecation.showPyplotGlobalUse', False)
 legend = st.checkbox('Players')
 if st.button('start'):
-    def petalplot(GA_selection2, i, j):
+    def petalplot(GA_selection1, i, j):
 
         def plotlabel(xvar, yvar, label):
             if legend:
@@ -422,17 +422,17 @@ if st.button('start'):
             fig = plt.figure(figsize=(10,10))
         ax = sns.scatterplot(x = i, y = j, data=GA_selection2)
 
-        GA_selection2.apply(lambda x: plotlabel(x[i],  x[j], x['Name']), axis=1)
+        GA_selection1.apply(lambda x: plotlabel(x[i],  x[j], x['Name']), axis=1)
         plt.title('RPL Analytics')
         plt.xlabel(i)
         plt.ylabel(j)
-        ax.vlines(GA_selection2[i].median(), GA_selection2[j].min(), GA_selection2[j].max())
-        ax.hlines(GA_selection2[j].median(), GA_selection2[i].min(), GA_selection2[i].max())
+        ax.vlines(GA_selection1[i].median(), GA_selection1[j].min(), GA_selection1[j].max())
+        ax.hlines(GA_selection1[j].median(), GA_selection1[i].min(), GA_selection1[i].max())
         ax.grid()
 
 
     #petalplot(GA_selection1, 'Defensive challenges','Challenges in defence won. %')
-    st.pyplot(petalplot(GA_selection2, i,j))
+    st.pyplot(petalplot(GA_selection1, i,j))
 
 
 # In[ ]:
