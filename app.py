@@ -420,7 +420,7 @@ if st.button('start'):
             fig = plt.figure(figsize=(20,20))
         else:
             fig = plt.figure(figsize=(10,10))
-        ax = sns.scatterplot(x = i, y = j, data=GA_selection2)
+        ax = sns.scatterplot(x = i, y = j, data=GA_selection1)
 
         GA_selection1.apply(lambda x: plotlabel(x[i],  x[j], x['Name']), axis=1)
         plt.title('RPL Analytics')
