@@ -422,8 +422,8 @@ if st.button('start'):
             fig = plt.figure(figsize=(10,10))
         ax = sns.scatterplot(x = i, y = j, data=GA_selection2)
 
-        GA_selection2.apply(lambda x: plotlabel(x[i],  x[j], x['Player']), axis=1)
-        plt.title('2022-2023 Big 5 European Leagues Analytics')
+        GA_selection2.apply(lambda x: plotlabel(x[i],  x[j], x['Name']), axis=1)
+        plt.title('RPL Analytics')
         plt.xlabel(i)
         plt.ylabel(j)
         ax.vlines(GA_selection2[i].median(), GA_selection2[j].min(), GA_selection2[j].max())
