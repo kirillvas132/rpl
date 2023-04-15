@@ -448,8 +448,8 @@ if st.button('start'):
         st.vega_lite_chart(chart_data, {"title": 'Demo',
             'mark': {'type': 'circle'},
             'encoding': {
-            'x': {'field': i, 'type': 'quantitative'},
-            'y': {'field': j, 'type': 'quantitative'},
+            'x': {'field': i, 'type': 'quantitative',"scale": {"zero": False}},
+            'y': {'field': j, 'type': 'quantitative',"scale": {"zero": False}},
             'size': {'field': i, 'type': 'quantitative'},
             'color': {'field': j, 'type': 'quantitative'},
             'tooltip': {'field': 'Name', 'type': 'nominal'}
