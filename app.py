@@ -33,6 +33,13 @@ st.set_page_config(page_title="Аналитика", page_icon=":bar_chart:", lay
 row0_spacer1, row0_1, row0_spacer2, row0_2, row0_spacer3 = st.columns((.1, 2.3, .1, 1.3, .1))
 with row0_1:
     st.title('Анализ футболистов на основе статистических показателей(14.04)')
+with row0_2:
+    st.text("")
+    st.subheader('App by [Kirill Vasyuchkov](https://t.me/Blue_Sky_w)')
+
+
+
+# In[5]:
 
 
 data2 = pd.DataFrame()
@@ -156,7 +163,7 @@ datagr = data2
 data2 = data2[['Name','Position','sh','Defence','Recovery','Distribution','Take on','air','Chance creation','Rank','Team', 'League', 'Age', 'Minutes_played']].sort_values('Rank', ascending = False).head(1000)
 
 
-# In[2]:
+# In[5]:
 
 
 league = st.multiselect("Выбор лиг:", data2["League"].unique(), default=data2["League"].unique())
@@ -365,77 +372,89 @@ st.markdown('График строится исходя из выбранной 
 
 
 
-GA_selection1 = datagr.query("League == @leaguepp & Position == @positionpp")
-i = st.selectbox("Выберите 1 параметр:", GA_selection1[['Matches played',
-                                                       'Minutes_played', 'Starting lineup appearances',
-                                                        'Goals', 'Assists', 'Expected assists', 'Offsides', 'Yellow cards',
-                                                       'Red cards', 'Shots', 'Penalty',
-                                                     'Penalty kicks scored. %', 'Passes',
-                                                       'Accurate passes. %', 'Key passes', 'Crosses', 'Accurate crosses. %',
-                                                       'Lost balls', 'Lost balls in own half', 'Ball recoveries',
-                                                       "Ball recoveries in opponent's half", 'xG (Expected goals)',
-                                                       'Challenges', 'Challenges won. %', 'Attacking challenges',
-                                                       'Air challenges', 'Dribbles', 'Tackles', 'Ball interceptions',
-                                                       'Free ball pick ups', 'Defensive challenges',
-                                                       'Challenges in defence won. %', 'Age', 'Height','Air challenges won. %',
-                                                         'Challenges in attack won. %',
-                                                         'Successful dribbles. %', 'Tackles won. %','Fouls',
-                                                       'Fouls suffered', 'Key passes accurate',"Shots on target. %"]].columns)
-j = st.selectbox("Выберите 2 параметр:", GA_selection1[['Matches played',
-                                                       'Minutes_played', 'Starting lineup appearances',
-                                                        'Goals', 'Assists', 'Expected assists', 'Offsides', 'Yellow cards',
-                                                       'Red cards', 'Shots', 'Penalty',
-                                                     'Penalty kicks scored. %', 'Passes',
-                                                       'Accurate passes. %', 'Key passes', 'Crosses', 'Accurate crosses. %',
-                                                       'Lost balls', 'Lost balls in own half', 'Ball recoveries',
-                                                       "Ball recoveries in opponent's half", 'xG (Expected goals)',
-                                                       'Challenges', 'Challenges won. %', 'Attacking challenges',
-                                                       'Air challenges', 'Dribbles', 'Tackles', 'Ball interceptions',
-                                                       'Free ball pick ups', 'Defensive challenges',
-                                                       'Challenges in defence won. %', 'Age', 'Height','Air challenges won. %',
-                                                         'Challenges in attack won. %',
-                                                         'Successful dribbles. %', 'Tackles won. %','Fouls',
-                                                       'Fouls suffered', 'Key passes accurate',"Shots on target. %"]].columns)
+GA_selection2 = datagr.query("League == @leaguepp & Position == @positionpp")
+GA_selection2.columns = GA_selection2.columns.str.replace('.', '')
+i = st.selectbox("Выберите 1 параметр:", GA_selection2[['Matches played',
+                                                       'Minutes_played', 'Starting lineup appearances', 'Goals',
+                                                       'xG (Expected goals)', 'Assists', 'Expected assists', 'Offsides',
+                                                       'Yellow cards', 'Red cards', 'Shots', 'Shots on target %', 'Passes',
+                                                       'Accurate passes %', 'Key passes', 'Key passes accurate', 'Penalty',
+                                                       'Penalty kicks scored %', 'Crosses', 'Accurate crosses %', 'Lost balls',
+                                                       'Lost balls in own half', 'Ball recoveries',
+                                                       "Ball recoveries in opponent's half", 'Challenges', 'Challenges won %',
+                                                       'Attacking challenges', 'Challenges in attack won %',
+                                                       'Defensive challenges', 'Challenges in defence won %', 'Air challenges',
+                                                       'Air challenges won %', 'Dribbles', 'Successful dribbles %', 'Tackles',
+                                                       'Tackles won %', 'Ball interceptions', 'Free ball pick ups', 'Fouls',
+                                                       'Fouls suffered']].columns)
+j = st.selectbox("Выберите 2 параметр:", GA_selection2[['Matches played',
+                                                       'Minutes_played', 'Starting lineup appearances', 'Goals',
+                                                       'xG (Expected goals)', 'Assists', 'Expected assists', 'Offsides',
+                                                       'Yellow cards', 'Red cards', 'Shots', 'Shots on target %', 'Passes',
+                                                       'Accurate passes %', 'Key passes', 'Key passes accurate', 'Penalty',
+                                                       'Penalty kicks scored %', 'Crosses', 'Accurate crosses %', 'Lost balls',
+                                                       'Lost balls in own half', 'Ball recoveries',
+                                                       "Ball recoveries in opponent's half", 'Challenges', 'Challenges won %',
+                                                       'Attacking challenges', 'Challenges in attack won %',
+                                                       'Defensive challenges', 'Challenges in defence won %', 'Air challenges',
+                                                       'Air challenges won %', 'Dribbles', 'Successful dribbles %', 'Tackles',
+                                                       'Tackles won %', 'Ball interceptions', 'Free ball pick ups', 'Fouls',
+                                                       'Fouls suffered']].columns)
 
 
 
-# In[30]:
-
-st.set_option('deprecation.showPyplotGlobalUse', False)
-legend = st.checkbox('Players')
-if st.button('start'):
-    def petalplot(GA_selection1, i, j):
-
-        def plotlabel(xvar, yvar, label):
-            if legend:
-                if label == f'{name}':
-                    ax.text(xvar+0.002, yvar, label, c ='red', size=18)
-                else:
-                    ax.text(xvar+0.002, yvar, label, c ='black', size=15)
-            else:
-                if label == f'{name}':
-                    ax.text(xvar+0.002, yvar, label, c ='red', size=18)
-
-        if legend:        
-            fig = plt.figure(figsize=(20,20))
-        else:
-            fig = plt.figure(figsize=(10,10))
-        ax = sns.scatterplot(x = i, y = j, data=GA_selection1)
-
-        GA_selection1.apply(lambda x: plotlabel(x[i],  x[j], x['Name']), axis=1)
-        plt.title('RPL Analytics')
-        plt.xlabel(i)
-        plt.ylabel(j)
-        ax.vlines(GA_selection1[i].median(), GA_selection1[j].min(), GA_selection1[j].max())
-        ax.hlines(GA_selection1[j].median(), GA_selection1[i].min(), GA_selection1[i].max())
-        ax.grid()
-
-
-    #petalplot(GA_selection1, 'Defensive challenges','Challenges in defence won. %')
-    st.pyplot(petalplot(GA_selection1, i,j), use_container_width=False)
 
 
 # In[ ]:
+
+
+# In[30]:
+st.set_option('deprecation.showPyplotGlobalUse', False)
+legend = st.checkbox('Players')
+if st.button('start'):
+    col1, col2 = st.columns(2)
+    with col1:
+        def petalplot(GA_selection2, i, j):
+
+            def plotlabel(xvar, yvar, label):
+                if legend:
+                    if label == f'{name}':
+                        ax.text(xvar+0.002, yvar, label, c ='red', size=18)
+                    else:
+                        ax.text(xvar+0.002, yvar, label, c ='black', size=15)
+                else:
+                    if label == f'{name}':
+                        ax.text(xvar+0.002, yvar, label, c ='red', size=18)
+
+            if legend:        
+                fig = plt.figure(figsize=(20,20))
+            else:
+                fig = plt.figure(figsize=(10,10))
+            ax = sns.scatterplot(x = i, y = j, data=GA_selection2)
+
+            GA_selection2.apply(lambda x: plotlabel(x[i],  x[j], x['Name']), axis=1)
+            plt.title('RPL Analytics')
+            plt.xlabel(i)
+            plt.ylabel(j)
+            ax.vlines(GA_selection2[i].median(), GA_selection2[j].min(), GA_selection2[j].max())
+            ax.hlines(GA_selection2[j].median(), GA_selection2[i].min(), GA_selection2[i].max())
+            ax.grid()
+
+
+        #petalplot(GA_selection1, 'Defensive challenges','Challenges in defence won. %')
+        st.pyplot(petalplot(GA_selection2, i,j), use_container_width=True)
+    with col2:
+        chart_data = GA_selection2
+        st.vega_lite_chart(chart_data, {"title": 'Demo',
+            'mark': {'type': 'circle'},
+            'encoding': {
+            'x': {'field': i, 'type': 'quantitative'},
+            'y': {'field': j, 'type': 'quantitative'},
+            'size': {'field': i, 'type': 'quantitative'},
+            'color': {'field': j, 'type': 'quantitative'},
+            'tooltip': {'field': 'Name', 'type': 'nominal'}
+            },
+        }) 
 
 
 
