@@ -163,7 +163,7 @@ datagr = data2
 data2 = data2[['Name','Position','sh','Defence','Recovery','Distribution','Take on','air','Chance creation','Rank','Team', 'League', 'Age', 'Minutes_played']].sort_values('Rank', ascending = False).head(1000)
 
 
-# In[5]:
+# In[2]:
 
 
 league = st.multiselect("Выбор лиг:", data2["League"].unique(), default=data2["League"].unique())
@@ -405,15 +405,14 @@ j = st.selectbox("Выберите 2 параметр:", GA_selection2[['Matches
 
 
 
-# In[ ]:
+# In[5]:
 
 
 # In[30]:
-st.set_option('deprecation.showPyplotGlobalUse', False)
 legend = st.checkbox('Players')
 if st.button('start'):
-    col1, col2 = st.columns(2)
-    with col1:
+    tab1, tab2 = st.tabs(["demo 1", "demo2"])
+    with tab1:
         def petalplot(GA_selection2, i, j):
 
             def plotlabel(xvar, yvar, label):
@@ -443,18 +442,27 @@ if st.button('start'):
 
         #petalplot(GA_selection1, 'Defensive challenges','Challenges in defence won. %')
         st.pyplot(petalplot(GA_selection2, i,j), use_container_width=True)
-    with col2:
-        chart_data = GA_selection2
-        st.vega_lite_chart(chart_data, {"title": 'Demo',
-            'mark': {'type': 'circle'},
-            'encoding': {
-            'x': {'field': i, 'type': 'quantitative',"scale": {"zero": False}},
-            'y': {'field': j, 'type': 'quantitative',"scale": {"zero": False}},
-            'size': {'field': i, 'type': 'quantitative'},
-            'color': {'field': j, 'type': 'quantitative'},
-            'tooltip': {'field': 'Name', 'type': 'nominal'}
-            },
-        }) 
+    with tab2:
+        st.vega_lite_chart({'data' : GA_selection2,
+         'layer':[{"title": 'Demo',
+                'mark': {'type': 'circle'},
+                'encoding': {
+                'x': {'field': i, 'type': 'quantitative',"scale": {"zero": False}},
+                'y': {'field': j, 'type': 'quantitative',"scale": {"zero": False}},
+                'size': {'field': i, 'type': 'quantitative'},
+                'color': {'field': 'Name', 'type': 'nominal'}}},
+            {"mark": "rule",
+            "encoding": {
+            "x": {"aggregate": "median", "field": i},
+            "size": {"value": 2}}},
+                  {"mark": "rule",
+            "encoding": {
+            "y": {"aggregate": "median", "field": j},
+            "size": {"value": 2}}}
+                 ]})
+
+
+# In[ ]:
 
 
 
