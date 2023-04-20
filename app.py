@@ -459,7 +459,7 @@ if st.button('start'):
             "encoding": {
             "y": {"aggregate": "median", "field": j},
             "size": {"value": 2}}}
-                 ]})
+                 ]},use_container_width=True)
 
 
 # In[ ]:
