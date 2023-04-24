@@ -409,6 +409,7 @@ j = st.selectbox("Выберите 2 параметр:", GA_selection2[['Matches
 
 
 # In[30]:
+st.set_option('deprecation.showPyplotGlobalUse', False)
 legend = st.checkbox('Players')
 if st.button('start'):
     tab1, tab2 = st.tabs(["demo 1", "demo2"])
