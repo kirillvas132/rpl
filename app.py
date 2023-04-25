@@ -81,7 +81,8 @@ if st.session_state["authentication_status"]:
         pt = optionals_pt.slider(
             'Select a range',
             0.0, 1000.0, (1000.0, 2500.0))
-        if pt:
+        clicked = st.button('Заменить')
+        if clicked:
             st.cache_data.clear()
 
 
@@ -314,8 +315,25 @@ if st.session_state["authentication_status"]:
         df_selection1.at[1, 'Chance creation'] = dfpp['Chance creation'].median()
         df_selection1 = df_selection1.reset_index(drop=True)
 
-        # In[27]:
+        # In[27]:скачать таблицу
+        def to_excel(df):
+            output = BytesIO()
+            writer = pd.ExcelWriter(output, engine='xlsxwriter')
+            df.to_excel(writer, index=False, sheet_name='Sheet1')
+            workbook = writer.book
+            worksheet = writer.sheets['Sheet1']
+            format1 = workbook.add_format({'num_format': '0.00'})
+            worksheet.set_column('A:A', None, format1)
+            writer.save()
+            processed_data = output.getvalue()
+            return processed_data
 
+
+        df_xlsx = to_excel(datagr.query("League == @leaguepp & Position == @positionpp"))
+        st.download_button(label='📥 Скачать таблицу excel',
+                           data=df_xlsx,
+                           file_name='VK_scouts.xlsx')
+        #строим радар футболиста
         if st.button('Анализировать'):
             ps = datagr.query("Name == @name & Position==@positionpp")
             ps = ps[['Name', 'Age', 'Foot', 'Height', 'Nationality', 'Team']]
@@ -467,26 +485,7 @@ if st.session_state["authentication_status"]:
                                               ]}, use_container_width=True)
 
         # In[ ]:
-        import pyxlsb
-
-
-        def to_excel(df):
-            output = BytesIO()
-            writer = pd.ExcelWriter(output, engine='xlsxwriter')
-            df.to_excel(writer, index=False, sheet_name='Sheet1')
-            workbook = writer.book
-            worksheet = writer.sheets['Sheet1']
-            format1 = workbook.add_format({'num_format': '0.00'})
-            worksheet.set_column('A:A', None, format1)
-            writer.save()
-            processed_data = output.getvalue()
-            return processed_data
-
-
-        df_xlsx = to_excel(GA_selection2)
-        st.download_button(label='📥 Скачать таблицу excel',
-                           data=df_xlsx,
-                           file_name='VK_scouts.xlsx')
+        #import pyxlsb
 elif st.session_state["authentication_status"] is False:
     st.error('Username/password is incorrect')
 elif st.session_state["authentication_status"] is None:
