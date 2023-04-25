@@ -223,7 +223,60 @@ if st.session_state["authentication_status"]:
         )
         st.plotly_chart(fig)
 
+        st.divider()
+        dt=data[['Name','Position', 'Matches played','Minutes_played', 'Goals', 'Assists', 'Fouls', 'Tackles won. %', 'Successful dribbles. %', 'Challenges won. %']].query("Name == @name & Position==@positionpp")
+        for i in dt[['Goals', 'Assists', 'Fouls',]]:
+            dt[i] = dt[i] * (dt['Minutes_played'] / 90)
 
+        def to_excel(df):
+            output = BytesIO()
+            writer = pd.ExcelWriter(output, engine='xlsxwriter')
+            df.to_excel(writer, index=False, sheet_name='Sheet1')
+            workbook = writer.book
+            worksheet = writer.sheets['Sheet1']
+            format1 = workbook.add_format({'num_format': '0.00'})
+            worksheet.set_column('A:A', None, format1)
+            writer.save()
+            processed_data = output.getvalue()
+            return processed_data
+
+
+        df_xlsx = to_excel(datagr.query("League == @leaguepp & Position == @positionpp"))
+        st.download_button(label='📥 Скачать расширенную таблицу по позиции xlsx',
+                           data=df_xlsx,
+                           file_name='VK_scouts.xlsx')
+        #st.dataframe(dt)
+        qwe=datagr.query("Name == @name & Position==@positionpp").reset_index()
+
+        #PIE
+        def poj(p,v,n):
+            st.vega_lite_chart({
+                "description": "A simple donut chart with embedded data.",
+                "data": {
+                    "values": [
+                        {"category": n,
+                         "value": qwe.at[0, p] * 0.01 * qwe.at[0, v]},
+                        {"category": 'Безуспешные',
+                         "value": qwe.at[0, p] - qwe.at[0, p] * 0.01 * qwe.at[0, v]},
+                    ]
+                },
+                "mark": {"type": "arc", "innerRadius": 50},
+                "encoding": {
+                    "theta": {"field": "value", "type": "quantitative"},
+                    "color": {"field": "category", "type": "nominal"}
+                }
+            })
+        col1,col2, col3 = st.columns(3)
+        with col1:
+            poj('Passes', 'Accurate passes. %', 'передачи')
+            st.write("Passes%=", qwe.at[0, 'Accurate passes. %'])
+        with col2:
+            poj('Tackles', 'Tackles won. %','отборы')
+            st.write("Tackles%=", qwe.at[0, 'Tackles won. %'])
+        with col3:
+            poj('Dribbles', 'Successful dribbles. %','Дриблинг')
+            st.write("Dribbles%=", qwe.at[0, 'Successful dribbles. %'])
+        st.divider()
         # графики
         st.title('График')
         # In[29]:
@@ -231,6 +284,7 @@ if st.session_state["authentication_status"]:
         GA_selection2 = datagr.query("League == @leaguepp & Position == @positionpp")
         GA_selection2.columns = GA_selection2.columns.str.replace('.', '')
         GA_selection2.columns = GA_selection2.columns.str.replace("'", '')
+
 
         # In[30]:
         st.set_option('deprecation.showPyplotGlobalUse', False)
@@ -242,7 +296,8 @@ if st.session_state["authentication_status"]:
                                                'x': {'field': i, 'type': 'quantitative', "scale": {"zero": False}},
                                                'y': {'field': j, 'type': 'quantitative', "scale": {"zero": False}},
                                                'size': {'field': i, 'type': 'quantitative'},
-                                               'color': {'field': 'Name', 'type': 'nominal'}}},
+                                               'color': {'field': 'Name', 'type': 'nominal'},
+                                           }},
                                           {"mark": "rule",
                                            "encoding": {
                                                "x": {"aggregate": "median", "field": i},
@@ -250,8 +305,11 @@ if st.session_state["authentication_status"]:
                                           {"mark": "rule",
                                            "encoding": {
                                                "y": {"aggregate": "median", "field": j},
-                                               "size": {"value": 2}}}
-                                          ]}, use_container_width=True)
+                                               "size": {"value": 2}}}]}, use_container_width=True)
+
+
+
+
         if positionpp=='LD' or positionpp=='RD':
             tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(
                 ["Движение", "Перехват владения", "Отбор", "Игра в воздухе", "Передачи", "Владение", "Навесы"])
