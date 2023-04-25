@@ -1,0 +1,16 @@
+cookie:
+  expiry_days: 30
+  key: some_signature_key
+  name: some_cookie_name
+credentials:
+  usernames:
+    kaplin:
+      email: fkgroup.kaplin@gmail.com
+      name: kaplin
+      password: $2b$12$y4DZpHrbebJuk4hnylZzjuGmYjCKFvS.xLHoyM4zjLTUPsjxbpvbS
+    kvas:
+      email: vasyu4kov-kirill@yandex.ru
+      name: Kirill
+      password: $2b$12$t20RGcMwBn7q/Sl2mENBAeC3ZrhI9KT0T74cTH19QMs4WJj73Z9Gu
+preauthorized:
+  emails: null
