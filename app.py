@@ -28,13 +28,6 @@ if st.session_state["authentication_status"]:
 
 elif st.session_state["authentication_status"] is False:
     st.error('Username/password is incorrect')
-try:
-    if authenticator.register_user('Register user', preauthorization=False):
-        st.success('User registered successfully')
-except Exception as e:
-    st.error(e)
 
-with open('config.yaml', 'w') as file:
-    yaml.dump(config, file, default_flow_style=False)
 
 
