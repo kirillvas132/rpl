@@ -31,17 +31,14 @@ if st.session_state["authentication_status"]:
         import plotly.graph_objects as go
         import matplotlib.pyplot as plt
 
+        # In[ ]:
+        # st.set_page_config(page_title="Аналитика", page_icon=":bar_chart:", layout="wide")
+
         # In[4]:
 
-        row0_spacer1, row0_1, row0_spacer2, row0_2, row0_spacer3,row0_3 = st.columns((.1, 2.3, .1, 1.3, .1, .3))
-        with row0_1:
-            st.title('Анализ футболистов на основе статистических показателей(14.04)')
-        with row0_2:
-            st.text("")
-            st.subheader('App by [Kirill Vasyuchkov](https://t.me/Blue_Sky_w)')
-        with row0_3:
-            authenticator.logout('Logout', 'main')
-        # In[5]:
+
+        st.title('Индивидуальный профиль футболиста')
+
 
         data2 = pd.DataFrame()
 
@@ -109,10 +106,6 @@ if st.session_state["authentication_status"]:
             for i in data34:
                 df[i] = df[i] / (df['Minutes played'] / 90)
 
-            # if tm == "Ближе к основе":
-            #  df = df[(df['Minutes played']>1.3*df['Minutes played'].mean())]
-            # else:
-            #   df = df[(df['Minutes played']<=1.3*df['Minutes played'].mean())]
             df = df.rename(columns={'Minutes played': 'Minutes_played'})
             df = df.query('@pt[0]<=Minutes_played<=@pt[1]')
 
@@ -160,10 +153,6 @@ if st.session_state["authentication_status"]:
 
             # In[10]:
 
-
-        col1, col2, col3, col4 = st.columns(4)
-        with col1:
-            st.subheader('Российские лиги')
         data = nas0('РПЛ', 1)
         data2 = data
         datagr = data2
@@ -171,151 +160,78 @@ if st.session_state["authentication_status"]:
             ['Name', 'Position', 'sh', 'Defence', 'Recovery', 'Distribution', 'Take on', 'air', 'Chance creation',
              'Rank', 'Team', 'League', 'Age', 'Minutes_played']].sort_values('Rank', ascending=False).head(1000)
 
-        # In[2]:
-
-        league = st.multiselect("Выбор лиг:", data2["League"].unique(), default=data2["League"].unique())
-        position = st.multiselect("Выбор позиций:", data2["Position"].unique(), default=data2["Position"].unique())
-
-        df_selection_league = data2.query("League ==@league")
-        optionals_team = st.expander("Команды", False)
-        team = optionals_team.multiselect("Select the Team:", df_selection_league["Team"].unique(),
-                                          default=df_selection_league["Team"].unique())
-
-        optionals = st.expander("Возраст", True)
-        age = optionals.slider(
-            'Выберите диапазон',
-            float(data2["Age"].min()), float(data2["Age"].max()),
-            (float(data2["Age"].min()), float(data2["Age"].max())))
-
-        # In[15]:
-
-        df_selection = data2.query(
-            "Position == @position & Team ==@team & League ==@league & @age[0]<=Age<=@age[1]"
-        )
-
-        # In[16]:
-
-        df_selection = df_selection.reset_index(drop=True).style.background_gradient(cmap='PiYG')
-
-        # In[17]:
-
-        st.dataframe(df_selection)
-
-        # In[ ]:
-
-        st.text(
-            '*sh-удары, defence-защита(отборы, подкаты), recovery-возврат владения(перехваты, свободные подборы), take on - дриблинг и ведение мяча, \nair - игра в воздухе, chance creation - создание моментов, rank - итоговый рейтинг')
-
-        # # Technical profiles
-
-        # In[18]:
-
-        tp = data2
-
-        # In[19]:
-
-        for i in tp:
-            tp['gr_air_blocker'] = tp['Defence'] + tp['air']
-            tp['air_bl_pm'] = tp['air'] + tp['Distribution']
-            tp['air_bl_fm'] = tp['air'] + tp['Recovery']
-            tp['gr_bl_fm'] = tp['Defence'] + tp['Recovery']
-            tp['gr_bl_pm'] = tp['Defence'] + tp['Distribution']
-            tp['fm_pm'] = tp['Recovery'] + tp['Distribution']
-            tp['def_inf'] = tp['air'] + tp['Defence'] + tp['Recovery'] + tp['Take on']
-            tp['pm_inf'] = tp['Distribution'] + tp['Take on']
-            tp['def_sh'] = tp['air'] + tp['Defence'] + tp['Recovery'] + tp['Distribution'] + tp['sh']
-            tp['pm_creator'] = tp['Distribution'] + tp['Chance creation']
-            tp['inf_creator'] = tp['Take on'] + tp['Chance creation']
-            tp['sh_inf'] = tp['sh'] + tp['Take on']
-            tp['sh_creator'] = tp['air'] + tp['Recovery']
-            tp['ar_tm'] = tp['air'] + tp['Take on'] + tp['Chance creation'] + tp['Distribution'] + 2 * tp['sh']
-            tp['tm_sh'] = tp['sh'] + tp['air']
-
-        # In[20]:
-
-        tp = tp[
-            ['Name', 'Position', 'Team', 'League', 'gr_air_blocker', 'air_bl_pm', 'air_bl_fm', 'gr_bl_fm', 'gr_bl_pm',
-             'fm_pm', 'def_inf', 'pm_inf', 'def_sh', 'pm_creator', 'inf_creator', 'sh_inf', 'sh_creator', 'ar_tm',
-             'tm_sh']]
-
-        # In[21]:
-
-        st.title('Технический профиль')
-        st.markdown(
-            'Подробнее в исследовании [CIES Football Observatory Monthly Report n°74 - April 2022](https://www.football-observatory.com/IMG/sites/mr/mr74/en/)')
-
-        prof = {'профиль': ['Ground-to-air blocker', 'Air blocker playmaker', 'Air blocker filter man',
-                            'Ground blocker filter man',
-                            'Ground blocker playmaker', 'Filter man playmaker', 'Defensive infiltrator',
-                            'Playmaker infiltrator',
-                            'Defensive shooter', 'Playmaker creator', 'Infiltrator creator', 'Shooter infiltrator',
-                            'Shooter creator', 'Allrounder target man', 'Target man shooter'],
-                'качества': ['защита, игра головой', 'игра в воздухе, игра в пас', 'возврат мяча, игра в воздухе',
-                             'защита, возврат мяча', 'защита, игра в пас',
-                             'возврат мяча команде, игра в пас',
-                             'защита, игра в воздухе, возврат мяча команде, дриблинг и ведение мяча',
-                             'игра в пас, дриблинг и ведение мяча',
-                             'защита, игра в воздухе, возврат мяча, игра в пас, удары', 'игра в пас, создание моментов',
-                             'дриблинг и ведение мяча, создание моментов', 'удары, дриблинг и ведение мяча',
-                             'удары, создание моментов',
-                             'создание моментов, игра в воздухе, дриблинг и ведение мяча, игра в пас, удары',
-                             'игра в воздухе, удары']}
-
-        prof1 = pd.DataFrame(prof)
-        st.dataframe(prof1, use_container_width=True)
-
-        position1 = st.multiselect("Выбор позиции:", tp["Position"].unique())
-        league1 = st.multiselect("Выбор лиги:", tp["League"].unique())
-
-        # In[22]:
-
-        tp_selection = tp.query(
-            "Position == @position1 & League==@league1"
-        )
-
-        # In[23]:
-
-        tp_selection = tp_selection.reset_index(drop=True).style.background_gradient(cmap='PiYG')
-        st.dataframe(tp_selection, use_container_width=True)
-
-        # # Индивидуальный профиль
-
-        # In[24]:
-
-        st.title('График')
-
-        # In[25]:
 
         # player profile
         leaguepp = st.selectbox("Выбор лиги:", data2["League"].unique())
         positionpp = st.selectbox("Выбор позиции:", data2["Position"].unique())
+        dfpp = data2.query(
+            "League ==@leaguepp & Position ==@positionpp"
+        )
 
+        # In[26]:
+
+        name = st.selectbox("Выберите футболиста:", dfpp["Name"].unique())
+        df_selection1 = dfpp.query(
+            "Name== @name")
+        df_selection1 = df_selection1.reset_index(drop=True)
+
+        df_selection1 = df_selection1[
+            ['sh', 'Defence', 'Recovery', 'Distribution', 'Take on', 'air', 'Chance creation']]
+
+        df_selection1.at[1, 'sh'] = dfpp['sh'].median()
+        df_selection1.at[1, 'Defence'] = dfpp['Defence'].median()
+        df_selection1.at[1, 'Recovery'] = dfpp['Recovery'].median()
+        df_selection1.at[1, 'Distribution'] = dfpp['Distribution'].median()
+        df_selection1.at[1, 'Take on'] = dfpp['Take on'].median()
+        df_selection1.at[1, 'air'] = dfpp['air'].median()
+        df_selection1.at[1, 'Chance creation'] = dfpp['Chance creation'].median()
+        df_selection1 = df_selection1.reset_index(drop=True)
+
+        #строим радар футболиста
+        ps = datagr.query("Name == @name & Position==@positionpp")
+        ps = ps[['Name', 'Age', 'Foot', 'Height', 'Nationality', 'Team']]
+        st.dataframe(ps)
+
+        fig = go.Figure()
+
+        colors = ["tomato", "dodgerblue", "yellow"]
+        for i in range(2):
+            fig.add_trace(
+                go.Scatterpolar(
+                    r=df_selection1.loc[i].values.tolist() + df_selection1.loc[i].values.tolist()[:1],
+                    theta=df_selection1.columns.tolist() + df_selection1.columns.tolist()[:1],
+                    fill='toself',
+
+                    fillcolor=colors[i], line=dict(color=colors[i]),
+                    showlegend=True, opacity=0.3
+                )
+            )
+
+        fig.update_layout(
+            polar=dict(
+                radialaxis=dict(
+                    visible=True,
+                    range=[0, 1.05]
+                )
+            ),
+            title={
+                'text': "Рейтинг игрока(красный) относительно игроков этой позиции",
+                'y': 0.9,
+                'x': 0.5,
+                'xanchor': 'center',
+                'yanchor': 'top'}
+        )
+        st.plotly_chart(fig)
+
+
+        # графики
+        st.title('График')
         # In[29]:
 
         GA_selection2 = datagr.query("League == @leaguepp & Position == @positionpp")
         GA_selection2.columns = GA_selection2.columns.str.replace('.', '')
-        i = st.selectbox("Выберите 1 параметр:", GA_selection2[['Matches played',
-                                                                'Minutes_played', 'Starting lineup appearances',
-                                                                'Goals',
-                                                                'xG (Expected goals)', 'Assists', 'Expected assists',
-                                                                'Offsides',
-                                                                'Yellow cards', 'Red cards', 'Shots',
-                                                                'Shots on target %', 'Passes',
-                                                                'Accurate passes %', 'Key passes',
-                                                                'Key passes accurate', 'Penalty',
-                                                                'Penalty kicks scored %', 'Crosses',
-                                                                'Accurate crosses %', 'Lost balls',
-                                                                'Lost balls in own half', 'Ball recoveries',
-                                                                "Ball recoveries in opponent's half", 'Challenges',
-                                                                'Challenges won %',
-                                                                'Attacking challenges', 'Challenges in attack won %',
-                                                                'Defensive challenges', 'Challenges in defence won %',
-                                                                'Air challenges',
-                                                                'Air challenges won %', 'Dribbles',
-                                                                'Successful dribbles %', 'Tackles',
-                                                                'Tackles won %', 'Ball interceptions',
-                                                                'Free ball pick ups', 'Fouls',
-                                                                'Fouls suffered']].columns)
+        GA_selection2.columns = GA_selection2.columns.str.replace("'", '')
+
         j = st.selectbox("Выберите 2 параметр:", GA_selection2[['Matches played',
                                                                 'Minutes_played', 'Starting lineup appearances',
                                                                 'Goals',
@@ -328,7 +244,7 @@ if st.session_state["authentication_status"]:
                                                                 'Penalty kicks scored %', 'Crosses',
                                                                 'Accurate crosses %', 'Lost balls',
                                                                 'Lost balls in own half', 'Ball recoveries',
-                                                                "Ball recoveries in opponent's half", 'Challenges',
+                                                                "Ball recoveries in opponents half", 'Challenges',
                                                                 'Challenges won %',
                                                                 'Attacking challenges', 'Challenges in attack won %',
                                                                 'Defensive challenges', 'Challenges in defence won %',
@@ -343,31 +259,10 @@ if st.session_state["authentication_status"]:
 
         # In[30]:
         st.set_option('deprecation.showPyplotGlobalUse', False)
-        tab1, tab2 = st.tabs(["demo 1", "demo2"])
-        with tab1:
-            def petalplot(GA_selection2, i, j):
-                def plotlabel(xvar, yvar, label):
-                    ax.text(xvar + 0.002, yvar, label, c='black', size=18)
 
-                fig = plt.figure(figsize=(20, 20))
-
-                ax = sns.scatterplot(x=i, y=j, data=GA_selection2)
-
-                GA_selection2.apply(lambda x: plotlabel(x[i], x[j], x['Name']), axis=1)
-                plt.title('RPL Analytics')
-                plt.xlabel(i)
-                plt.ylabel(j)
-                ax.vlines(GA_selection2[i].median(), GA_selection2[j].min(), GA_selection2[j].max())
-                ax.hlines(GA_selection2[j].median(), GA_selection2[i].min(), GA_selection2[i].max())
-                ax.grid()
-
-
-            # petalplot(GA_selection1, 'Defensive challenges','Challenges in defence won. %')
-            st.pyplot(petalplot(GA_selection2, i, j), use_container_width=True)
-        with tab2:
+        def veg(i,j):
             st.vega_lite_chart({'data': GA_selection2,
-                                'layer': [{"title": 'Demo',
-                                           'mark': {'type': 'circle'},
+                                'layer': [{'mark': {'type': 'circle'},
                                            'encoding': {
                                                'x': {'field': i, 'type': 'quantitative', "scale": {"zero": False}},
                                                'y': {'field': j, 'type': 'quantitative', "scale": {"zero": False}},
@@ -382,9 +277,98 @@ if st.session_state["authentication_status"]:
                                                "y": {"aggregate": "median", "field": j},
                                                "size": {"value": 2}}}
                                           ]}, use_container_width=True)
+        if positionpp=='LD' or positionpp=='RD':
+            tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(
+                ["Движение", "Перехват владения", "Отбор", "Игра в воздухе", "Передачи", "Владение", "Навесы"])
+            with tab1:
+                veg('Dribbles', 'Successful dribbles %')
+            with tab2:
+                veg('Ball interceptions', 'Ball recoveries')
+            with tab3:
+                veg('Tackles', 'Tackles won %')
+            with tab4:
+                veg('Air challenges', 'Air challenges won %')
+            with tab5:
+                veg('Passes', 'Accurate passes %')
+            with tab6:
+                veg('Lost balls', 'Ball recoveries')
+            with tab7:
+                veg('Crosses', 'Accurate crosses %')
 
-        # In[ ]:
-        #import pyxlsb
+        if positionpp=='CD':
+            tab1, tab2, tab3, tab4, tab5 = st.tabs(
+                ["Перехват владения", "Отбор",  "Передачи", "Игра в воздухе", "Владение"])
+            with tab1:
+                veg('Ball interceptions', 'Ball recoveries')
+            with tab2:
+                veg('Tackles', 'Tackles won %')
+            with tab3:
+                veg('Passes', 'Accurate passes %')
+            with tab4:
+                veg('Air challenges', 'Air challenges won %')
+            with tab5:
+                veg('Lost balls in own half', 'Ball recoveries')
+
+        if positionpp=='DM' or positionpp=='CM':
+            tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs(
+                ["Перехват владения", "Отбор",  "Передачи", "Игра в воздухе", "Владение", "Развитие пасов", "Все испытания",
+                 "Результаты созидания"])
+            with tab1:
+                veg('Ball interceptions', 'Ball recoveries')
+            with tab2:
+                veg('Tackles', 'Tackles won %')
+            with tab3:
+                veg('Passes', 'Accurate passes %')
+            with tab4:
+                veg('Air challenges', 'Air challenges won %')
+            with tab5:
+                veg('Lost balls in own half', 'Ball recoveries')
+            with tab6:
+                veg('Key passes', 'Accurate passes %')
+            with tab7:
+                veg('Challenges', 'Challenges won %')
+            with tab8:
+                veg('Key passes', 'Expected assists')
+
+        if positionpp == 'LM' or positionpp == 'RM':
+            tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(
+                ["Движение", "Результаты созидания(передачи)", "Действия в атаке", "Удары", "Передачи",
+                 "Воздействие на оборону соперника", "Навесы"])
+            with tab1:
+                veg('Dribbles', 'Successful dribbles %')
+            with tab2:
+                veg('Key passes', 'Expected assists')
+            with tab3:
+                veg('Attacking challenges', 'Challenges in attack won %')
+            with tab4:
+                veg('Shots', 'Goals')
+            with tab5:
+                veg('Passes', 'Accurate passes %')
+            with tab6:
+                veg('Dribbles', 'Fouls suffered')
+            with tab7:
+                veg('Crosses', 'Accurate crosses %')
+
+        if positionpp == 'F':
+            tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(
+                ["Движение", "Результаты созидания(передачи)", "Действия в атаке", "Реализация", "Передачи",
+                 "Воздействие на оборону соперника", "Игра в воздухе"])
+            with tab1:
+                veg('Dribbles', 'Successful dribbles %')
+            with tab2:
+                veg('Key passes', 'Expected assists')
+            with tab3:
+                veg('Attacking challenges', 'Challenges in attack won %')
+            with tab4:
+                veg('xG (Expected goals)', 'Goals')
+            with tab5:
+                veg('Passes', 'Accurate passes %')
+            with tab6:
+                veg('Dribbles', 'Fouls suffered')
+            with tab7:
+                veg('Air challenges', 'Air challenges won %')
+
+
 elif st.session_state["authentication_status"] is False:
     st.error('Username/password is incorrect')
 elif st.session_state["authentication_status"] is None:
