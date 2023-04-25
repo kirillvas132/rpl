@@ -232,31 +232,6 @@ if st.session_state["authentication_status"]:
         GA_selection2.columns = GA_selection2.columns.str.replace('.', '')
         GA_selection2.columns = GA_selection2.columns.str.replace("'", '')
 
-        j = st.selectbox("Выберите 2 параметр:", GA_selection2[['Matches played',
-                                                                'Minutes_played', 'Starting lineup appearances',
-                                                                'Goals',
-                                                                'xG (Expected goals)', 'Assists', 'Expected assists',
-                                                                'Offsides',
-                                                                'Yellow cards', 'Red cards', 'Shots',
-                                                                'Shots on target %', 'Passes',
-                                                                'Accurate passes %', 'Key passes',
-                                                                'Key passes accurate', 'Penalty',
-                                                                'Penalty kicks scored %', 'Crosses',
-                                                                'Accurate crosses %', 'Lost balls',
-                                                                'Lost balls in own half', 'Ball recoveries',
-                                                                "Ball recoveries in opponents half", 'Challenges',
-                                                                'Challenges won %',
-                                                                'Attacking challenges', 'Challenges in attack won %',
-                                                                'Defensive challenges', 'Challenges in defence won %',
-                                                                'Air challenges',
-                                                                'Air challenges won %', 'Dribbles',
-                                                                'Successful dribbles %', 'Tackles',
-                                                                'Tackles won %', 'Ball interceptions',
-                                                                'Free ball pick ups', 'Fouls',
-                                                                'Fouls suffered']].columns)
-
-        # In[5]:
-
         # In[30]:
         st.set_option('deprecation.showPyplotGlobalUse', False)
 
