@@ -4,3 +4,5 @@ requests
 seaborn
 plotly
 matplotlib
+streamlit_authenticator
+yaml
