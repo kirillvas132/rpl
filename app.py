@@ -86,7 +86,7 @@ if st.session_state["authentication_status"]:
 
         # In[3]:
 
-        @st.cache_data
+        @st.cache_data(ttl=60)
         def nas0(lig, kef):
             global data1
             global data34
