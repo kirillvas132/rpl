@@ -228,8 +228,7 @@ if st.session_state["authentication_status"]:
         ############################
 
         def radar2(a,b,c,d,i,f, j):
-            dfpp1 = data.query(
-                "League ==@leaguepp & Position ==@positionpp")
+
             dfpp2 = data.query(
                 "League ==@leaguepp & Position ==@positionpp")
             dfpp1 = datagr.query(
@@ -238,13 +237,13 @@ if st.session_state["authentication_status"]:
             dfpp1 = dfpp1[
                 [a,b,c,d,i,f, j]]
 
-            dfpp1.at[1, a] = datagr[a].median()
-            dfpp1.at[1, b] = datagr[b].median()
-            dfpp1.at[1, c] = datagr[c].median()
-            dfpp1.at[1, d] = datagr[d].median()
-            dfpp1.at[1, i] = datagr[i].median()
-            dfpp1.at[1, f] = datagr[f].median()
-            dfpp1.at[1, j] = datagr[j].median()
+            dfpp1.at[1, a] = dfpp2[a].mean()
+            dfpp1.at[1, b] = dfpp2[b].mean()
+            dfpp1.at[1, c] = dfpp2[c].mean()
+            dfpp1.at[1, d] = dfpp2[d].mean()
+            dfpp1.at[1, i] = dfpp2[i].mean()
+            dfpp1.at[1, f] = dfpp2[f].mean()
+            dfpp1.at[1, j] = dfpp2[j].mean()
             dfpp1 = dfpp1.reset_index(drop=True)
 
             from soccerplots.radar_chart import Radar
@@ -294,13 +293,16 @@ if st.session_state["authentication_status"]:
         with tab2:
             col1, col2 = st.columns(2)
             with col1:
-                st.pyplot(radar2('Accurate passes. %', 'Tackles', 'Tackles won. %', 'Ball interceptions', 'Fouls', 'Ball recoveries', 'Air challenges won. %'))
+                st.pyplot(radar2('Accurate passes. %', 'Tackles', 'Tackles won. %', 'Ball interceptions', 'Fouls',
+                                 'Ball recoveries', 'Air challenges won. %'))
             with col2:
-                st.pyplot(radar2('xG (Expected goals)', 'Expected assists','Key passes', 'Dribbles','Successful dribbles. %','Crosses', 'Accurate crosses. %'))
+                st.pyplot(radar2('xG (Expected goals)', 'Expected assists','Key passes', 'Dribbles',
+                                 'Successful dribbles. %', 'Crosses', 'Accurate crosses. %'))
         ###############################
         ###############################
         st.divider()
-        dt=data[['Name','Position', 'Matches played','Minutes_played', 'Goals', 'Assists', 'Fouls', 'Tackles won. %', 'Successful dribbles. %', 'Challenges won. %']].query("Name == @name & Position==@positionpp")
+        dt=data[['Name','Position', 'Matches played','Minutes_played', 'Goals', 'Assists', 'Fouls', 'Tackles won. %',
+                 'Successful dribbles. %', 'Challenges won. %']].query("Name == @name & Position==@positionpp")
         for i in dt[['Goals', 'Assists', 'Fouls',]]:
             dt[i] = dt[i] * (dt['Minutes_played'] / 90)
 
@@ -462,6 +464,24 @@ if st.session_state["authentication_status"]:
             with tab7:
                 veg('Air challenges', 'Air challenges won %')
 
+
+    def to_excel(df):
+        output = BytesIO()
+        writer = pd.ExcelWriter(output, engine='xlsxwriter')
+        df.to_excel(writer, index=False, sheet_name='Sheet1')
+        workbook = writer.book
+        worksheet = writer.sheets['Sheet1']
+        format1 = workbook.add_format({'num_format': '0.00'})
+        worksheet.set_column('A:A', None, format1)
+        writer.save()
+        processed_data = output.getvalue()
+        return processed_data
+
+
+    df_xlsx = to_excel(datagr.query("League == @leaguepp & Position == @positionpp"))
+    st.download_button(label='📥 Скачать расширенную таблицу по позиции xlsx',
+                       data=df_xlsx,
+                       file_name='VK_scouts.xlsx')
 
 elif st.session_state["authentication_status"] is False:
     st.error('Username/password is incorrect')
