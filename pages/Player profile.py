@@ -32,12 +32,6 @@ if st.session_state["authentication_status"]:
         import plotly.graph_objects as go
         import matplotlib.pyplot as plt
 
-        # In[ ]:
-        # st.set_page_config(page_title="Аналитика", page_icon=":bar_chart:", layout="wide")
-
-        # In[4]:
-
-
         st.title('Индивидуальный профиль футболиста')
 
 
@@ -84,7 +78,7 @@ if st.session_state["authentication_status"]:
 
         # In[3]:
 
-        @st.cache_data
+        @st.cache_data(ttl=60)
         def nas0(lig, kef):
             global data1
             global data34
@@ -155,6 +149,8 @@ if st.session_state["authentication_status"]:
             # In[10]:
 
         data = nas0('РПЛ', 1)
+        if len(data)==0:
+            st.stop()
         data2 = data
         datagr = data2
         data2 = data2[
@@ -347,9 +343,6 @@ if st.session_state["authentication_status"]:
         GA_selection2 = datagr.query("League == @leaguepp & Position == @positionpp")
         GA_selection2.columns = GA_selection2.columns.str.replace('.', '')
         GA_selection2.columns = GA_selection2.columns.str.replace("'", '')
-
-
-        # In[30]: скрыть ошибки
 
 
         def veg(i,j):
