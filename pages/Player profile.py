@@ -303,23 +303,7 @@ if st.session_state["authentication_status"]:
         for i in dt[['Goals', 'Assists', 'Fouls',]]:
             dt[i] = dt[i] * (dt['Minutes_played'] / 90)
 
-        def to_excel(df):
-            output = BytesIO()
-            writer = pd.ExcelWriter(output, engine='xlsxwriter')
-            df.to_excel(writer, index=False, sheet_name='Sheet1')
-            workbook = writer.book
-            worksheet = writer.sheets['Sheet1']
-            format1 = workbook.add_format({'num_format': '0.00'})
-            worksheet.set_column('A:A', None, format1)
-            writer.save()
-            processed_data = output.getvalue()
-            return processed_data
 
-
-        df_xlsx = to_excel(datagr.query("League == @leaguepp & Position == @positionpp"))
-        st.download_button(label='📥 Скачать расширенную таблицу по позиции xlsx',
-                           data=df_xlsx,
-                           file_name='VK_scouts.xlsx')
         #st.dataframe(dt)
         qwe=datagr.query("Name == @name & Position==@positionpp").reset_index()
 
