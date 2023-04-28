@@ -167,14 +167,12 @@ if st.session_state["authentication_status"]:
         dfpp = data2.query(
             "League ==@leaguepp & Position ==@positionpp"
         )
-
         # In[26]:
 
         name = st.selectbox("Выберите футболиста:", dfpp["Name"].unique())
         df_selection1 = dfpp.query(
             "Name== @name")
         df_selection1 = df_selection1.reset_index(drop=True)
-
         df_selection1 = df_selection1[
             ['sh', 'Defence', 'Recovery', 'Distribution', 'Take on', 'air', 'Chance creation']]
 
@@ -188,15 +186,16 @@ if st.session_state["authentication_status"]:
         df_selection1 = df_selection1.reset_index(drop=True)
 
         #строим радар футболиста
+
         ps = datagr.query("Name == @name & Position==@positionpp")
         ps = ps[['Name', 'Age', 'Foot', 'Height', 'Nationality', 'Team']]
         st.dataframe(ps)
 
-        fig = go.Figure()
+        fig1 = go.Figure()
 
         colors = ["tomato", "dodgerblue", "yellow"]
         for i in range(2):
-            fig.add_trace(
+            fig1.add_trace(
                 go.Scatterpolar(
                     r=df_selection1.loc[i].values.tolist() + df_selection1.loc[i].values.tolist()[:1],
                     theta=df_selection1.columns.tolist() + df_selection1.columns.tolist()[:1],
@@ -207,7 +206,7 @@ if st.session_state["authentication_status"]:
                 )
             )
 
-        fig.update_layout(
+        fig1.update_layout(
             polar=dict(
                 radialaxis=dict(
                     visible=True,
@@ -221,8 +220,84 @@ if st.session_state["authentication_status"]:
                 'xanchor': 'center',
                 'yanchor': 'top'}
         )
-        st.plotly_chart(fig)
 
+
+        # RADAR2
+        ############################
+        ############################
+
+        def radar2(a,b,c,d,i,f, j):
+            dfpp1 = data.query(
+                "League ==@leaguepp & Position ==@positionpp")
+            dfpp2 = data.query(
+                "League ==@leaguepp & Position ==@positionpp")
+            dfpp1 = datagr.query(
+                "Name== @name")
+            dfpp1 = dfpp1.reset_index(drop=True)
+            dfpp1 = dfpp1[
+                [a,b,c,d,i,f, j]]
+
+            dfpp1.at[1, a] = datagr[a].median()
+            dfpp1.at[1, b] = datagr[b].median()
+            dfpp1.at[1, c] = datagr[c].median()
+            dfpp1.at[1, d] = datagr[d].median()
+            dfpp1.at[1, i] = datagr[i].median()
+            dfpp1.at[1, f] = datagr[f].median()
+            dfpp1.at[1, j] = datagr[j].median()
+            dfpp1 = dfpp1.reset_index(drop=True)
+
+            from soccerplots.radar_chart import Radar
+
+            params = dfpp1.columns
+            ranges = [(dfpp2[a].min(), dfpp2[a].max()),
+                       (dfpp2[b].min(), dfpp2[b].max()),
+                       (dfpp2[c].min(), dfpp2[c].max()),
+                       (dfpp2[d].min(), dfpp2[d].max()),
+                       (dfpp2[i].min(), dfpp2[i].max()),
+                       (dfpp2[f].min(), dfpp2[f].max()),
+                       (dfpp2[j].min(), dfpp2[j].max())]
+            ## parameter value
+            values = [
+                dfpp1.loc[0].values.tolist(),  ## for player
+                dfpp1.loc[1].values.tolist()  ## for median
+            ]
+            ## title
+            title = dict(
+                title_name=name,
+                title_color='#9B3647',
+                subtitle_name=ps['Team'].iloc[0],
+                subtitle_color='#ABCDEF',
+                title_name_2='Средние значения по лиге',
+                title_color_2='#ABCDEF',
+                title_fontsize=18,
+                subtitle_fontsize=15,
+            )
+
+            ## endnote
+            endnote = "Visualization made by: Kirill Vasyuchkov(@Blue_Sky_w)\nAll units are in per90"
+
+            ## instantiate object
+            radar = Radar(background_color="#121212", patch_color="#28252C", label_color="#F0FFF0",
+                          range_color="#F0FFF0")
+
+            ## plot radar
+            fig, ax = radar.plot_radar(ranges=ranges, params=params, values=values,
+                                       radar_color=['#9B3647', '#3282b8'],
+                                       title=title, endnote=endnote,
+                                       alphas=[0.55, 0.5], compare=True)
+
+
+        tab1, tab2 = st.tabs(['Общие характеристики', 'Защитные показатели'])
+        with tab1:
+            st.plotly_chart(fig1)
+        with tab2:
+            col1, col2 = st.columns(2)
+            with col1:
+                st.pyplot(radar2('Accurate passes. %', 'Tackles', 'Tackles won. %', 'Ball interceptions', 'Fouls', 'Ball recoveries', 'Air challenges won. %'))
+            with col2:
+                st.pyplot(radar2('xG (Expected goals)', 'Expected assists','Key passes', 'Dribbles','Successful dribbles. %','Crosses', 'Accurate crosses. %'))
+        ###############################
+        ###############################
         st.divider()
         dt=data[['Name','Position', 'Matches played','Minutes_played', 'Goals', 'Assists', 'Fouls', 'Tackles won. %', 'Successful dribbles. %', 'Challenges won. %']].query("Name == @name & Position==@positionpp")
         for i in dt[['Goals', 'Assists', 'Fouls',]]:
@@ -266,6 +341,7 @@ if st.session_state["authentication_status"]:
                     "color": {"field": "category", "type": "nominal"}
                 }
             })
+        st.subheader('Аналитичкские сводки')
         col1,col2, col3 = st.columns(3)
         with col1:
             poj('Passes', 'Accurate passes. %', 'передачи')
@@ -286,7 +362,7 @@ if st.session_state["authentication_status"]:
         GA_selection2.columns = GA_selection2.columns.str.replace("'", '')
 
 
-        # In[30]:
+        # In[30]: скрыть ошибки
         st.set_option('deprecation.showPyplotGlobalUse', False)
 
         def veg(i,j):
