@@ -465,24 +465,6 @@ if st.session_state["authentication_status"]:
                 veg('Air challenges', 'Air challenges won %')
 
 
-    def to_excel(df):
-        output = BytesIO()
-        writer = pd.ExcelWriter(output, engine='xlsxwriter')
-        df.to_excel(writer, index=False, sheet_name='Sheet1')
-        workbook = writer.book
-        worksheet = writer.sheets['Sheet1']
-        format1 = workbook.add_format({'num_format': '0.00'})
-        worksheet.set_column('A:A', None, format1)
-        writer.save()
-        processed_data = output.getvalue()
-        return processed_data
-
-
-    df_xlsx = to_excel(datagr.query("League == @leaguepp & Position == @positionpp"))
-    writer.save()
-    st.download_button(label='📥 Скачать расширенную таблицу по позиции xlsx',
-                       data=df_xlsx,
-                       file_name='VK_scouts.xlsx')
 
 elif st.session_state["authentication_status"] is False:
     st.error('Username/password is incorrect')
