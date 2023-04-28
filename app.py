@@ -345,6 +345,25 @@ if st.session_state["authentication_status"]:
         st.set_option('deprecation.showPyplotGlobalUse', False)
         tab1, tab2 = st.tabs(["demo 1", "demo2"])
         with tab1:
+            st.vega_lite_chart({'data': GA_selection2,
+                                'layer': [{"title": 'Demo',
+                                           'mark': {'type': 'circle'},
+                                           'encoding': {
+                                               'x': {'field': i, 'type': 'quantitative', "scale": {"zero": False}},
+                                               'y': {'field': j, 'type': 'quantitative', "scale": {"zero": False}},
+                                               'size': {'field': i, 'type': 'quantitative'},
+                                               'color': {'field': 'Name', 'type': 'nominal'}}},
+                                          {"mark": "rule",
+                                           "encoding": {
+                                               "x": {"aggregate": "median", "field": i},
+                                               "size": {"value": 2}}},
+                                          {"mark": "rule",
+                                           "encoding": {
+                                               "y": {"aggregate": "median", "field": j},
+                                               "size": {"value": 2}}}
+                                          ]}, use_container_width=True)
+
+        with tab2:
             def petalplot(GA_selection2, i, j):
                 def plotlabel(xvar, yvar, label):
                     ax.text(xvar + 0.002, yvar, label, c='black', size=18)
@@ -364,24 +383,6 @@ if st.session_state["authentication_status"]:
 
             # petalplot(GA_selection1, 'Defensive challenges','Challenges in defence won. %')
             st.pyplot(petalplot(GA_selection2, i, j), use_container_width=True)
-        with tab2:
-            st.vega_lite_chart({'data': GA_selection2,
-                                'layer': [{"title": 'Demo',
-                                           'mark': {'type': 'circle'},
-                                           'encoding': {
-                                               'x': {'field': i, 'type': 'quantitative', "scale": {"zero": False}},
-                                               'y': {'field': j, 'type': 'quantitative', "scale": {"zero": False}},
-                                               'size': {'field': i, 'type': 'quantitative'},
-                                               'color': {'field': 'Name', 'type': 'nominal'}}},
-                                          {"mark": "rule",
-                                           "encoding": {
-                                               "x": {"aggregate": "median", "field": i},
-                                               "size": {"value": 2}}},
-                                          {"mark": "rule",
-                                           "encoding": {
-                                               "y": {"aggregate": "median", "field": j},
-                                               "size": {"value": 2}}}
-                                          ]}, use_container_width=True)
 
         # In[ ]:
         #import pyxlsb
