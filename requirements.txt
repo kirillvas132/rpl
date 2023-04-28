@@ -7,3 +7,4 @@ matplotlib
 streamlit_authenticator
 xlsxwriter
 pyxlsb
+soccerplots
