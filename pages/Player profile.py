@@ -479,6 +479,7 @@ if st.session_state["authentication_status"]:
 
 
     df_xlsx = to_excel(datagr.query("League == @leaguepp & Position == @positionpp"))
+    writer.save()
     st.download_button(label='📥 Скачать расширенную таблицу по позиции xlsx',
                        data=df_xlsx,
                        file_name='VK_scouts.xlsx')
