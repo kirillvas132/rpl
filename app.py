@@ -3,7 +3,7 @@ import streamlit as st
 st.set_page_config(page_title="Аналитика", page_icon=":bar_chart:")#, layout="wide")
 
 import pandas as pd
-import openpyxl
+#import openpyxl
 import seaborn as sns
 import xlsxwriter
 import streamlit as st
