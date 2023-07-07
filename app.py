@@ -3,7 +3,7 @@ import streamlit as st
 st.set_page_config(page_title="Аналитика", page_icon=":bar_chart:")#, layout="wide")
 
 import pandas as pd
-#import openpyxl
+import openpyxl
 import seaborn as sns
 import xlsxwriter
 import streamlit as st
@@ -15,10 +15,6 @@ import matplotlib.pyplot as plt
 #####
 st.title('Scouting and Analytics')
 st.subheader('App by [Kirill Vasyuchkov](https://t.me/Blue_Sky_w)')
-
-#with row0_3:
-#    authenticator.logout('Logout', 'main')
-# In[5]:
 
 data2 = pd.DataFrame()
 
@@ -470,7 +466,7 @@ def radar2(a,b,c,d,i,f, j, h, k):
         title_name=name,
         title_color='#9B3647',
         subtitle_name=ps['Team'].iloc[0],
-        subtitle_color='#ABCDEF',
+        subtitle_color='#9B3647',
         title_name_2='Средние значения по лиге',
         title_color_2='#ABCDEF',
         title_fontsize=18,
@@ -481,8 +477,7 @@ def radar2(a,b,c,d,i,f, j, h, k):
     endnote = "Visualization made by: Kirill Vasyuchkov(@Blue_Sky_w)\nAll units are in per90"
 
     ## instantiate object
-    radar = Radar(background_color="#121212", patch_color="#28252C", label_color="#F0FFF0",
-                  range_color="#F0FFF0")
+    radar = Radar()
 
     ## plot radar
     fig, ax = radar.plot_radar(ranges=ranges, params=params, values=values,
